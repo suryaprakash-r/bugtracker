@@ -1,0 +1,146 @@
+<header class="top-navbar">
+
+    <!-- Mobile Toggle -->
+    <button
+        class="sidebar-toggle"
+        id="sidebarToggle"
+        type="button"
+        aria-label="Toggle navigation"
+    >
+        <i class="bi bi-list"></i>
+    </button>
+
+
+    <!-- Page Title -->
+    <div class="navbar-left">
+
+        <span class="navbar-page-title">
+            {% block navbar_title %}
+                BugTracker
+            {% endblock %}
+        </span>
+
+    </div>
+
+
+    <!-- Right Side -->
+    <div class="navbar-right">
+
+        <!-- Notifications -->
+        <a
+            href="#"
+            class="navbar-icon"
+            title="Notifications"
+        >
+            <i class="bi bi-bell"></i>
+
+            <span class="notification-dot"></span>
+        </a>
+
+
+        <!-- User Dropdown -->
+        <div class="dropdown">
+
+            <button
+                class="user-menu dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+            >
+
+                {% if request.user.profile.profile_image %}
+
+                    <img
+                        src="{{ request.user.profile.profile_image.url }}"
+                        alt="{{ request.user.username }}"
+                        class="user-avatar"
+                    >
+
+                {% else %}
+
+                    <div class="user-avatar user-avatar-default">
+                        {{ request.user.username|first|upper }}
+                    </div>
+
+                {% endif %}
+
+
+                <div class="user-info">
+
+                    <span class="user-name">
+                        {% if request.user.get_full_name %}
+                            {{ request.user.get_full_name }}
+                        {% else %}
+                            {{ request.user.username }}
+                        {% endif %}
+                    </span>
+
+                    <span class="user-role">
+                        {{ request.user.get_role_display }}
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- Dropdown -->
+            <ul class="dropdown-menu dropdown-menu-end user-dropdown">
+
+                <li class="user-dropdown-header">
+
+                    <strong>
+                        {{ request.user.username }}
+                    </strong>
+
+                    <span>
+                        {{ request.user.get_role_display }}
+                    </span>
+
+                </li>
+
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a
+                        class="dropdown-item"
+                        href="{% url 'accounts:profile' %}"
+                    >
+                        <i class="bi bi-person-circle"></i>
+                        Profile
+                    </a>
+                </li>
+
+                <li>
+                    <a
+                        class="dropdown-item"
+                        href="{% url 'accounts:password_change' %}"
+                    >
+                        <i class="bi bi-key-fill"></i>
+                        Change Password
+                    </a>
+                </li>
+
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+
+                <li>
+                    <a
+                        class="dropdown-item logout-dropdown"
+                        href="{% url 'accounts:logout' %}"
+                    >
+                        <i class="bi bi-box-arrow-right"></i>
+                        Logout
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</header>

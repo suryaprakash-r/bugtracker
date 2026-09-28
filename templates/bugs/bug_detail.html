@@ -1,0 +1,76 @@
+{% extends "base/base.html" %}
+{% load permissions %}
+
+{% block title %}
+{{ bug.bug_code }} | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Bug Details
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ bug.bug_code }}</h1>
+
+    <h2>{{ bug.title }}</h2>
+
+    <p>
+        <strong>Project:</strong>
+        {{ bug.project.name }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        {{ bug.get_status_display }}
+    </p>
+
+    <p>
+        <strong>Severity:</strong>
+        {{ bug.get_severity_display }}
+    </p>
+
+    <p>
+        <strong>Priority:</strong>
+        {{ bug.get_priority_display }}
+    </p>
+
+    <p>
+        <strong>Reporter:</strong>
+        {{ bug.reporter.username }}
+    </p>
+
+    <p>
+        <strong>Assigned To:</strong>
+
+        {% if bug.assigned_to %}
+            {{ bug.assigned_to.username }}
+        {% else %}
+            Unassigned
+        {% endif %}
+    </p>
+
+    <hr>
+
+    <h3>Description</h3>
+
+    <p>
+        {{ bug.description }}
+    </p>
+
+    <hr>
+
+    {% if request.user|can_update_bug_filter:bug %}
+        <a href="{% url 'bugs:update' bug.id %}">
+            Update Bug
+        </a>
+    {% endif %}
+
+    <br><br>
+
+    <a href="{% url 'bugs:list' %}">
+        Back to Bugs
+    </a>
+
+
+{% endblock %}

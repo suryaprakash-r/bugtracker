@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>403 | BugTracker</title>
+</head>
+
+<body>
+
+    <main>
+
+        <h1>403</h1>
+
+        <h2>Access Denied</h2>
+
+        <p>
+            You don't have permission to perform this action.
+        </p>
+
+        {% if request.user.is_authenticated %}
+
+            <p>
+                Logged in as:
+                <strong>{{ request.user.username }}</strong>
+            </p>
+
+            <p>
+                Role:
+                <strong>
+                    {{ request.user.get_role_display }}
+                </strong>
+            </p>
+
+        {% endif %}
+
+        <a href="{% url 'dashboard:index' %}">
+            Return to Dashboard
+        </a>
+
+    </main>
+
+</body>
+
+</html>

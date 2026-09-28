@@ -1,0 +1,83 @@
+{% extends "base/base.html" %}
+
+
+{% block title %}
+Profile | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+<h1>My Profile</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    {% if profile.profile_image %}
+        <img
+            src="{{ profile.profile_image.url }}"
+            alt="Profile image"
+            width="120"
+        >
+    {% endif %}
+
+    <p>
+        <strong>Username:</strong>
+        {{ request.user.username }}
+    </p>
+
+    <p>
+        <strong>Email:</strong>
+        {{ request.user.email }}
+    </p>
+
+    <p>
+        <strong>Role:</strong>
+        {{ request.user.get_role_display }}
+    </p>
+
+    <p>
+        <strong>Phone:</strong>
+        {{ profile.phone|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Designation:</strong>
+        {{ profile.designation|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Department:</strong>
+        {{ profile.department|default:"Not provided" }}
+    </p>
+
+    <p>
+        <strong>Bio:</strong>
+        {{ profile.bio|default:"Not provided" }}
+    </p>
+
+    <hr>
+
+    <a href="{% url 'accounts:profile_edit' %}">
+        Edit Profile
+    </a>
+
+    <br><br>
+
+    <a href="{% url 'accounts:password_change' %}">
+        Change Password
+    </a>
+
+    <br><br>
+
+    <a href="{% url 'dashboard:index' %}">
+        Dashboard
+    </a>
+
+{% endblock %}

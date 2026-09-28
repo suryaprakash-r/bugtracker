@@ -1,0 +1,31 @@
+
+{% extends "base/base.html" %}
+
+{% block title %}
+Manage Project | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Manage Project
+{% endblock %}
+
+{% block content %}
+
+<h1>Manage Project</h1>
+
+    <p>
+        Logged in as:
+        <strong>{{ request.user.username }}</strong>
+    </p>
+
+    <p>
+        You have permission to manage projects.
+    </p>
+
+    <a href="{% url 'projects:list' %}">
+        Projects
+    </a>
+
+{% endblock %}
+
+

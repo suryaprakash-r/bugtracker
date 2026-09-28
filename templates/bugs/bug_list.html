@@ -1,0 +1,70 @@
+{% extends "base/base.html" %}
+
+{% block title %}
+Bugs | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Bugs
+{% endblock %}
+
+{% block content %}
+
+<h1>Bug List</h1>
+
+    {% load permissions %}
+
+    {% if request.user|has_permission:"create_bug" %}
+        <p>
+            <a href="{% url 'bugs:create' %}">
+                Create Bug
+            </a>
+        </p>
+    {% endif %}
+
+    <hr>
+
+    {% for bug in bugs %}
+
+        <article>
+
+            <h2>
+                <a href="{% url 'bugs:detail' bug.id %}">
+                    {{ bug.bug_code }}
+                </a>
+            </h2>
+
+            <p>
+                {{ bug.title }}
+            </p>
+
+            <p>
+                Status:
+                {{ bug.get_status_display }}
+            </p>
+
+            <p>
+                Assigned:
+                {% if bug.assigned_to %}
+                    {{ bug.assigned_to.username }}
+                {% else %}
+                    Unassigned
+                {% endif %}
+            </p>
+
+            <a href="{% url 'bugs:detail' bug.id %}">
+                View Bug
+            </a>
+
+        </article>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No bugs found.</p>
+
+    {% endfor %}
+
+{% endblock %}
+

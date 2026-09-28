@@ -16,6 +16,14 @@ class User(AbstractUser):
         default=Role.TESTER,
     )
 
+    def has_role(self, *roles):
+        return self.role in roles
+
+    def has_permission(self, permission):
+        from .permissions import user_has_permission
+
+        return user_has_permission(self, permission)
+    
     def __str__(self):
         return self.username
     

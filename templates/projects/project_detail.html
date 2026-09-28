@@ -1,0 +1,46 @@
+{% extends "base/base.html" %}
+
+{% block title %}
+{{ project.name }} | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Project Details
+{% endblock %}
+
+{% block content %}
+
+<h1>{{ project.name }}</h1>
+
+    <p>
+        <strong>Project Key:</strong>
+        {{ project.project_key }}
+    </p>
+
+    <p>
+        <strong>Manager:</strong>
+        {{ project.manager.username }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        {{ project.get_status_display }}
+    </p>
+
+    <p>
+        {{ project.description }}
+    </p>
+
+    <hr>
+
+    <a href="{% url 'projects:manage' project.id %}">
+        Manage Project
+    </a>
+
+    <br><br>
+
+    <a href="{% url 'projects:list' %}">
+        Back to Projects
+    </a>
+
+{% endblock %}

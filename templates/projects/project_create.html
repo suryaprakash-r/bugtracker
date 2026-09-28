@@ -1,0 +1,29 @@
+{% extends "base/base.html" %}
+
+{% block title %}
+Create Project | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Create Project
+{% endblock %}
+
+{% block content %}
+
+<h1>Create Project</h1>
+
+    <p>
+        Logged in as:
+        <strong>{{ request.user.username }}</strong>
+    </p>
+
+    <p>
+        You have permission to create projects.
+    </p>
+
+    <a href="{% url 'projects:list' %}">
+        Projects
+    </a>
+
+{% endblock %}
+
