@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from django.db import transaction
 
 from apps.accounts.permissions import (
     Permission,
@@ -9,6 +11,8 @@ from apps.accounts.permissions import (
     role_required,
 )
 
+from .forms import BugCreateForm
+from .services import generate_bug_code
 from .models import Bug
 
 @login_required
@@ -75,11 +79,57 @@ def bug_detail(request, bug_id):
 @login_required
 @role_required(Permission.CREATE_BUG)
 def bug_create(request):
+
+    if request.method == "POST":
+
+        form = BugCreateForm(
+            request.POST,
+            user=request.user,
+        )
+
+        if form.is_valid():
+
+            with transaction.atomic():
+
+                bug = form.save(
+                    commit=False
+                )
+
+                bug.reporter = request.user
+
+                bug.status = Bug.Status.NEW
+
+                bug.bug_code = generate_bug_code(
+                    bug.project
+                )
+
+                bug.save()
+
+
+            messages.success(
+                request,
+                f"Bug {bug.bug_code} was created successfully.",
+            )
+
+            return redirect(
+                "bugs:detail",
+                bug.id,
+            )
+
+    else:
+
+        form = BugCreateForm(
+            user=request.user,
+        )
+
+
     return render(
         request,
         "bugs/bug_create.html",
+        {
+            "form": form,
+        },
     )
-
 
 @login_required
 @role_required(Permission.UPDATE_BUG)

@@ -1,0 +1,46 @@
+/* =========================================================
+   Bug Pages
+   ========================================================= */
+
+.bug-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.bug-code-display {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    background: #e8f2ff;
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.bug-title-display {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 23px;
+    font-weight: 700;
+}
+
+.bug-description {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-line;
+}
+
+
+@media (max-width: 768px) {
+
+    .bug-title-display {
+        font-size: 20px;
+    }
+
+}
