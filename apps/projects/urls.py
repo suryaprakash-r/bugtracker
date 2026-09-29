@@ -30,4 +30,20 @@ urlpatterns = [
         views.project_manage,
         name="manage",
     ),
+    path(
+        "<int:project_id>/edit/",
+        views.project_update,
+        name="update",
+    ),
+    path(
+        "<int:project_id>/members/",
+        views.project_members,
+        name="members",
+    ),
+
+    path(
+        "<int:project_id>/members/<int:member_id>/toggle/",
+        views.project_member_toggle,
+        name="member_toggle",
+    ),
 ]

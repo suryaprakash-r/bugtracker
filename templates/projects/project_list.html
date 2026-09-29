@@ -1,69 +1,151 @@
 {% extends "base/base.html" %}
 
+{% load static %}
+{% load permissions %}
+
+
 {% block title %}
 Projects | BugTracker
 {% endblock %}
+
 
 {% block navbar_title %}
 Projects
 {% endblock %}
 
-{% block content %}
 
-{% load permissions %}
+{% block extra_css %}
 
-    <h1>Projects</h1>
-
-    {% if request.user|has_permission:"create_project" %}
-        <p>
-            <a href="{% url 'projects:create' %}">
-                Create Project
-            </a>
-        </p>
-    {% endif %}
-
-    <hr>
-
-    {% for project in projects %}
-
-        <article>
-
-            <h2>
-                <a href="{% url 'projects:detail' project.id %}">
-                    {{ project.name }}
-                </a>
-            </h2>
-
-            <p>
-                Key:
-                {{ project.project_key }}
-            </p>
-
-            <p>
-                Manager:
-                {{ project.manager.username }}
-            </p>
-
-            <p>
-                Status:
-                {{ project.get_status_display }}
-            </p>
-
-            <a href="{% url 'projects:detail' project.id %}">
-                View Project
-            </a>
-
-        </article>
-
-        <hr>
-
-    {% empty %}
-
-        <p>No projects found.</p>
-
-    {% endfor %}
-
+<link
+    rel="stylesheet"
+    href="{% static 'css/projects.css' %}"
+>
 
 {% endblock %}
 
 
+{% block content %}
+
+<div class="project-list-header">
+
+    <div>
+
+        <h1 class="project-list-title">
+            Projects
+        </h1>
+
+        <p class="project-list-subtitle">
+            Manage and track your projects.
+        </p>
+
+    </div>
+
+
+    {% if request.user|has_permission:"create_project" %}
+
+        <a
+            href="{% url 'projects:create' %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-plus-lg me-1"></i>
+            Create Project
+        </a>
+
+    {% endif %}
+
+</div>
+
+
+<!-- Filters -->
+
+<div class="dashboard-card project-filter-card">
+
+    <div class="dashboard-card-body">
+
+        <form
+            method="get"
+            id="projectFilterForm"
+            class="project-filter-form"
+        >
+
+            <!-- Search -->
+
+            <div class="project-search-wrapper">
+
+                <i class="bi bi-search project-search-icon"></i>
+
+                <input
+                    type="text"
+                    name="search"
+                    id="projectSearch"
+                    class="form-control project-search-input"
+                    placeholder="Search projects..."
+                    value="{{ search_query }}"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- Status -->
+
+            <select
+                name="status"
+                id="projectStatus"
+                class="form-select project-filter-select"
+            >
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                {% for value, label in status_choices %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if status_filter == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- Clear -->
+
+            <button
+                type="button"
+                class="btn btn-light"
+                id="clearProjectFilters"
+            >
+                <i class="bi bi-x-lg me-1"></i>
+                Clear
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Realtime Results -->
+
+<div id="projectResults">
+
+    {% include "projects/_project_list_results.html" %}
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{% static 'js/projects.js' %}"></script>
+
+{% endblock %}

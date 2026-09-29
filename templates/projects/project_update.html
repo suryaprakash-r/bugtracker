@@ -1,11 +1,11 @@
 {% extends "base/base.html" %}
 
 {% block title %}
-Create Project | BugTracker
+Edit {{ project.name }} | BugTracker
 {% endblock %}
 
 {% block navbar_title %}
-Create Project
+Edit Project
 {% endblock %}
 
 
@@ -14,13 +14,16 @@ Create Project
 <div class="page-header mb-4">
 
     <div>
+
         <h1 class="h4 fw-bold mb-1">
-            Create Project
+            Edit Project
         </h1>
 
         <p class="text-muted mb-0">
-            Create a new project and configure its basic details.
+            Update the configuration and details of
+            <strong>{{ project.name }}</strong>.
         </p>
+
     </div>
 
 </div>
@@ -34,9 +37,17 @@ Create Project
 
             <div class="dashboard-card-header">
 
-                <h3 class="dashboard-card-title">
-                    Project Information
-                </h3>
+                <div>
+
+                    <h3 class="dashboard-card-title mb-1">
+                        Project Information
+                    </h3>
+
+                    <small class="text-muted">
+                        Project Key: {{ project.project_key }}
+                    </small>
+
+                </div>
 
             </div>
 
@@ -56,7 +67,7 @@ Create Project
                         <div class="alert alert-danger">
 
                             {% for error in form.non_field_errors %}
-                                {{ error }}
+                                <div>{{ error }}</div>
                             {% endfor %}
 
                         </div>
@@ -66,7 +77,8 @@ Create Project
 
                     <div class="row g-4">
 
-                        <!-- Name -->
+
+                        <!-- Project Name -->
 
                         <div class="col-12">
 
@@ -162,8 +174,7 @@ Create Project
                             {% if request.user.role == "PROJECT_MANAGER" %}
 
                                 <div class="form-text">
-                                    You will automatically be assigned as
-                                    the project manager.
+                                    You are the manager of this project.
                                 </div>
 
                             {% endif %}
@@ -260,7 +271,7 @@ Create Project
                     >
 
                         <a
-                            href="{% url 'projects:list' %}"
+                            href="{% url 'projects:detail' project.id %}"
                             class="btn btn-light"
                         >
                             Cancel
@@ -270,8 +281,8 @@ Create Project
                             type="submit"
                             class="btn btn-primary"
                         >
-                            <i class="bi bi-plus-lg me-1"></i>
-                            Create Project
+                            <i class="bi bi-check-lg me-1"></i>
+                            Save Changes
                         </button>
 
                     </div>

@@ -60,7 +60,7 @@ Bug Details
 
     <hr>
 
-    {% if request.user|can_update_bug_filter:bug %}
+    {% if request.user|can_update_bug:bug %}
         <a href="{% url 'bugs:update' bug.id %}">
             Update Bug
         </a>

@@ -1,0 +1,336 @@
+{% load permissions %}
+<div class="dashboard-card">
+
+    {% if projects %}
+
+        <div class="project-table-wrapper">
+
+            <table class="table project-list-table">
+
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Key</th>
+                        <th>Manager</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for project in projects %}
+
+                    <tr>
+
+                        <td>
+                            <a
+                                href="{% url 'projects:detail' project.id %}"
+                                class="project-list-name"
+                            >
+                                {{ project.name }}
+                            </a>
+
+                            {% if project.description %}
+                                <div class="project-list-description">
+                                    {{ project.description }}
+                                </div>
+                            {% endif %}
+                        </td>
+
+
+                        <td>
+                            <span class="project-list-key">
+                                {{ project.project_key }}
+                            </span>
+                        </td>
+
+
+                        <td>
+
+                            <div class="project-manager-name">
+
+                                {% if project.manager.get_full_name %}
+                                    {{ project.manager.get_full_name }}
+                                {% else %}
+                                    {{ project.manager.username }}
+                                {% endif %}
+
+                            </div>
+
+                            <div class="project-manager-username">
+                                {{ project.manager.username }}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if project.status == "PLANNING" %}
+
+                                <span class="project-status project-status-planning">
+                                    {{ project.get_status_display }}
+                                </span>
+
+                            {% elif project.status == "ACTIVE" %}
+
+                                <span class="project-status project-status-active">
+                                    {{ project.get_status_display }}
+                                </span>
+
+                            {% elif project.status == "ON_HOLD" %}
+
+                                <span class="project-status project-status-on-hold">
+                                    {{ project.get_status_display }}
+                                </span>
+
+                            {% elif project.status == "COMPLETED" %}
+
+                                <span class="project-status project-status-completed">
+                                    {{ project.get_status_display }}
+                                </span>
+
+                            {% elif project.status == "ARCHIVED" %}
+
+                                <span class="project-status project-status-archived">
+                                    {{ project.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {% if project.start_date %}
+                                {{ project.start_date|date:"d M Y" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+
+                        <td>
+                            {% if project.end_date %}
+                                {{ project.end_date|date:"d M Y" }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+
+                        <td>
+
+                            <div class="project-actions">
+
+                                <a
+                                    href="{% url 'projects:detail' project.id %}"
+                                    class="btn btn-sm btn-outline-primary project-action-btn"
+                                    title="View Project"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+
+                                {% if request.user|can_manage_project:project %}
+
+                                    <a
+                                        href="{% url 'projects:update' project.id %}"
+                                        class="btn btn-sm btn-outline-secondary project-action-btn"
+                                        title="Edit Project"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+
+                                    <a
+                                        href="{% url 'projects:members' project.id %}"
+                                        class="btn btn-sm btn-outline-secondary project-action-btn"
+                                        title="Manage Members"
+                                    >
+                                        <i class="bi bi-people"></i>
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- Pagination -->
+
+        <div class="px-4 pb-4">
+
+            <div class="project-pagination">
+
+                <div class="project-pagination-info">
+
+                    Showing
+                    <strong>{{ page_obj.start_index }}</strong>
+                    –
+                    <strong>{{ page_obj.end_index }}</strong>
+                    of
+                    <strong>{{ page_obj.paginator.count }}</strong>
+                    project{{ page_obj.paginator.count|pluralize }}
+
+                </div>
+
+
+                {% if page_obj.paginator.num_pages > 1 %}
+
+                    <nav aria-label="Project pagination">
+
+                        <ul class="pagination">
+
+                            {% if page_obj.has_previous %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link project-page-link"
+                                        href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.previous_page_number }}"
+                                        data-page="{{ page_obj.previous_page_number }}"
+                                    >
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </span>
+                                </li>
+
+                            {% endif %}
+
+
+                            {% for page_number in page_obj.paginator.page_range %}
+
+                                {% if page_number == page_obj.number %}
+
+                                    <li class="page-item active">
+                                        <span class="page-link">
+                                            {{ page_number }}
+                                        </span>
+                                    </li>
+
+                                {% elif page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+
+                                    <li class="page-item">
+
+                                        <a
+                                            class="page-link project-page-link"
+                                            href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_number }}"
+                                            data-page="{{ page_number }}"
+                                        >
+                                            {{ page_number }}
+                                        </a>
+
+                                    </li>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+
+                            {% if page_obj.has_next %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link project-page-link"
+                                        href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&page={{ page_obj.next_page_number }}"
+                                        data-page="{{ page_obj.next_page_number }}"
+                                    >
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item disabled">
+                                    <span class="page-link">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </span>
+                                </li>
+
+                            {% endif %}
+
+                        </ul>
+
+                    </nav>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+        <div class="project-empty-state">
+
+            <i class="bi bi-folder2-open"></i>
+
+            <h3>
+                No projects found
+            </h3>
+
+            {% if search_query or status_filter %}
+
+                <p>
+                    No projects match your current search or filters.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-light"
+                    id="clearProjectFiltersEmpty"
+                >
+                    Clear Filters
+                </button>
+
+            {% else %}
+
+                <p>
+                    There are no projects available yet.
+                </p>
+
+                {% if request.user|has_permission:"create_project" %}
+
+                    <a
+                        href="{% url 'projects:create' %}"
+                        class="btn btn-sm btn-primary"
+                    >
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Create Project
+                    </a>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>

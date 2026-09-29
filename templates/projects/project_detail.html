@@ -1,46 +1,765 @@
 {% extends "base/base.html" %}
+{% load static %}
+{% load permissions %}
+
 
 {% block title %}
 {{ project.name }} | BugTracker
 {% endblock %}
 
+
 {% block navbar_title %}
 Project Details
 {% endblock %}
 
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/projects.css' %}"
+>
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/dashboard.css' %}"
+>
+
+
+{% endblock %}
+
+
 {% block content %}
 
-<h1>{{ project.name }}</h1>
+<!-- =====================================================
+     Project Header
+     ===================================================== -->
 
-    <p>
-        <strong>Project Key:</strong>
-        {{ project.project_key }}
-    </p>
+<div class="project-header">
 
-    <p>
-        <strong>Manager:</strong>
-        {{ project.manager.username }}
-    </p>
+    <div class="project-header-left">
 
-    <p>
-        <strong>Status:</strong>
-        {{ project.get_status_display }}
-    </p>
+        <div class="project-breadcrumb">
 
-    <p>
-        {{ project.description }}
-    </p>
+            <a href="{% url 'projects:list' %}">
+                Projects
+            </a>
 
-    <hr>
+            <i class="bi bi-chevron-right"></i>
 
-    <a href="{% url 'projects:manage' project.id %}">
-        Manage Project
-    </a>
+            <span>
+                Project Details
+            </span>
 
-    <br><br>
+        </div>
 
-    <a href="{% url 'projects:list' %}">
+
+        <div class="project-key">
+            {{ project.project_key }}
+        </div>
+
+
+        <h1 class="project-title">
+            {{ project.name }}
+        </h1>
+
+
+        {% if project.description %}
+
+            <p class="project-description-short">
+                {{ project.description|truncatechars:150 }}
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="project-header-actions">
+
+        <!-- Project Status -->
+
+        {% if project.status == "PLANNING" %}
+
+            <span class="project-status project-status-planning">
+                {{ project.get_status_display }}
+            </span>
+
+        {% elif project.status == "ACTIVE" %}
+
+            <span class="project-status project-status-active">
+                {{ project.get_status_display }}
+            </span>
+
+        {% elif project.status == "ON_HOLD" %}
+
+            <span class="project-status project-status-on-hold">
+                {{ project.get_status_display }}
+            </span>
+
+        {% elif project.status == "COMPLETED" %}
+
+            <span class="project-status project-status-completed">
+                {{ project.get_status_display }}
+            </span>
+
+        {% elif project.status == "ARCHIVED" %}
+
+            <span class="project-status project-status-archived">
+                {{ project.get_status_display }}
+            </span>
+
+        {% endif %}
+
+
+        {% if request.user|can_manage_project:project %}
+
+            <a
+                href="{% url 'projects:update' project.id %}"
+                class="btn btn-primary btn-sm"
+            >
+                <i class="bi bi-pencil me-1"></i>
+                Edit Project
+            </a>
+
+            <a
+                href="{% url 'projects:members' project.id %}"
+                class="btn btn-outline-primary btn-sm"
+            >
+                <i class="bi bi-people me-1"></i>
+                Manage Members
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     Project Information
+     ===================================================== -->
+
+<div class="dashboard-card mb-4">
+
+    <div class="dashboard-card-header">
+
+        <h3 class="dashboard-card-title">
+            Project Information
+        </h3>
+
+    </div>
+
+
+    <div class="dashboard-card-body">
+
+        <div class="project-info-grid">
+
+            <!-- Manager -->
+
+            <div class="project-info-item">
+
+                <div class="project-info-label">
+                    Project Manager
+                </div>
+
+                <div class="project-info-value">
+                    {% if project.manager.get_full_name %}
+                        {{ project.manager.get_full_name }}
+                    {% else %}
+                        {{ project.manager.username }}
+                    {% endif %}
+                </div>
+
+            </div>
+
+
+            <!-- Start Date -->
+
+            <div class="project-info-item">
+
+                <div class="project-info-label">
+                    Start Date
+                </div>
+
+                <div class="project-info-value">
+
+                    {% if project.start_date %}
+                        {{ project.start_date|date:"d M Y" }}
+                    {% else %}
+                        Not set
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- End Date -->
+
+            <div class="project-info-item">
+
+                <div class="project-info-label">
+                    End Date
+                </div>
+
+                <div class="project-info-value">
+
+                    {% if project.end_date %}
+                        {{ project.end_date|date:"d M Y" }}
+                    {% else %}
+                        Not set
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     Project Statistics
+     ===================================================== -->
+
+<div class="row g-4 mb-4">
+
+    <!-- Total Bugs -->
+
+    <div class="col-12 col-md-4">
+
+        <div class="project-stat-card">
+
+            <div class="project-stat-content">
+
+                <div>
+
+                    <p class="project-stat-label">
+                        Total Bugs
+                    </p>
+
+                    <h2 class="project-stat-value">
+                        {{ project.total_bugs }}
+                    </h2>
+
+                </div>
+
+
+                <div class="project-stat-icon total">
+
+                    <i class="bi bi-bug-fill"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Open Bugs -->
+
+    <div class="col-12 col-md-4">
+
+        <div class="project-stat-card">
+
+            <div class="project-stat-content">
+
+                <div>
+
+                    <p class="project-stat-label">
+                        Open Bugs
+                    </p>
+
+                    <h2 class="project-stat-value">
+                        {{ project.open_bugs }}
+                    </h2>
+
+                </div>
+
+
+                <div class="project-stat-icon open">
+
+                    <i class="bi bi-exclamation-circle-fill"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Resolved Bugs -->
+
+    <div class="col-12 col-md-4">
+
+        <div class="project-stat-card">
+
+            <div class="project-stat-content">
+
+                <div>
+
+                    <p class="project-stat-label">
+                        Resolved Bugs
+                    </p>
+
+                    <h2 class="project-stat-value">
+                        {{ project.resolved_bugs }}
+                    </h2>
+
+                </div>
+
+
+                <div class="project-stat-icon resolved">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="row g-4">
+
+
+    <!-- =================================================
+         Description
+         ================================================= -->
+
+    <div class="col-12 col-xl-7">
+
+        <div class="dashboard-card h-100">
+
+            <div class="dashboard-card-header">
+
+                <h3 class="dashboard-card-title">
+                    Description
+                </h3>
+
+            </div>
+
+
+            <div class="dashboard-card-body">
+
+                {% if project.description %}
+
+                    <div class="project-description">
+                        {{ project.description }}
+                    </div>
+
+                {% else %}
+
+                    <div class="dashboard-empty">
+
+                        <i class="bi bi-file-text"></i>
+
+                        <p>
+                            No project description has been added.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         Members
+         ================================================= -->
+
+    <div class="col-12 col-xl-5">
+
+        <div class="dashboard-card h-100">
+
+            <div class="dashboard-card-header">
+
+                <h3 class="dashboard-card-title">
+                    Project Members
+                </h3>
+
+
+                {% if request.user|can_manage_project:project %}
+
+                    <a
+                        href="{% url 'projects:members' project.id %}"
+                        class="btn btn-sm btn-outline-primary"
+                    >
+                        Manage
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if members %}
+
+                <div class="table-responsive">
+
+                    <table class="table mb-0">
+
+                        <tbody>
+
+                            {% for membership in members %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        <div class="member-avatar">
+
+                                            {{ membership.user.username|first|upper }}
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <div class="member-name">
+
+                                                {% if membership.user.get_full_name %}
+
+                                                    {{ membership.user.get_full_name }}
+
+                                                {% else %}
+
+                                                    {{ membership.user.username }}
+
+                                                {% endif %}
+
+                                            </div>
+
+                                            <div class="member-username">
+
+                                                {{ membership.user.username }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="text-end">
+
+                                        <div class="small">
+                                            {{ membership.user.get_role_display }}
+                                        </div>
+
+
+                                        {% if membership.is_active %}
+
+                                            <span class="dashboard-badge badge-resolved">
+                                                Active
+                                            </span>
+
+                                        {% else %}
+
+                                            <span class="dashboard-badge badge-closed">
+                                                Inactive
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="dashboard-empty">
+
+                    <i class="bi bi-people"></i>
+
+                    <p>
+                        No members have been added yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     Recent Bugs
+     ===================================================== -->
+
+<div class="dashboard-card mt-4">
+
+    <div class="dashboard-card-header">
+
+        <h3 class="dashboard-card-title">
+            Recent Bugs
+        </h3>
+
+
+        {% if project.total_bugs %}
+
+            <a
+                href="{% url 'bugs:list' %}"
+                class="btn btn-sm btn-outline-primary"
+            >
+                View All Bugs
+            </a>
+
+        {% endif %}
+
+    </div>
+
+
+    {% if recent_bugs %}
+
+        <div class="table-responsive">
+
+            <table class="table recent-bugs-table mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Bug ID</th>
+
+                        <th>Title</th>
+
+                        <th>Priority</th>
+
+                        <th>Status</th>
+
+                        <th>Reporter</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for bug in recent_bugs %}
+
+                    <tr>
+
+                        <td>
+
+                            <a
+                                href="{% url 'bugs:detail' bug.id %}"
+                                class="project-bug-code"
+                            >
+                                {{ bug.bug_code }}
+                            </a>
+
+                        </td>
+
+
+                        <td>
+
+                            <a
+                                href="{% url 'bugs:detail' bug.id %}"
+                                class="project-bug-link"
+                            >
+                                {{ bug.title }}
+                            </a>
+
+                        </td>
+
+
+                        <td>
+
+                            {% if bug.priority == "CRITICAL" %}
+
+                                <span class="dashboard-badge priority-critical">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% elif bug.priority == "URGENT" %}
+
+                                <span class="dashboard-badge priority-urgent">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% elif bug.priority == "HIGH" %}
+
+                                <span class="dashboard-badge priority-high">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% elif bug.priority == "MEDIUM" %}
+
+                                <span class="dashboard-badge priority-medium">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% elif bug.priority == "LOW" %}
+
+                                <span class="dashboard-badge priority-low">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if bug.status == "NEW" %}
+
+                                <span class="dashboard-badge badge-new">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "ASSIGNED" %}
+
+                                <span class="dashboard-badge badge-assigned">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "IN_PROGRESS" %}
+
+                                <span class="dashboard-badge badge-in-progress">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "RESOLVED" %}
+
+                                <span class="dashboard-badge badge-resolved">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "TESTING" %}
+
+                                <span class="dashboard-badge badge-testing">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "CLOSED" %}
+
+                                <span class="dashboard-badge badge-closed">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "REOPENED" %}
+
+                                <span class="dashboard-badge badge-reopened">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ bug.reporter.username }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="dashboard-empty">
+
+            <i class="bi bi-bug"></i>
+
+            <p>
+                No bugs have been reported for this project yet.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =====================================================
+     Footer Navigation
+     ===================================================== -->
+
+<div class="d-flex justify-content-between align-items-center mt-4">
+
+    <a
+        href="{% url 'projects:list' %}"
+        class="btn btn-light btn-sm"
+    >
+        <i class="bi bi-arrow-left me-1"></i>
         Back to Projects
     </a>
+
+
+    {% if request.user|can_manage_project:project %}
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'projects:update' project.id %}"
+                class="btn btn-primary btn-sm"
+            >
+                <i class="bi bi-pencil me-1"></i>
+                Edit Project
+            </a>
+
+            <a
+                href="{% url 'projects:members' project.id %}"
+                class="btn btn-outline-primary btn-sm"
+            >
+                <i class="bi bi-people me-1"></i>
+                Manage Members
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

@@ -645,6 +645,59 @@ body {
 }
 
 
+/* =========================================================
+   Forms
+   ========================================================= */
+
+.form-label {
+    margin-bottom: 7px;
+
+    color: var(--text-primary);
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.form-control,
+.form-select {
+    min-height: 42px;
+
+    border-color: var(--border);
+
+    border-radius: 7px;
+
+    font-size: 13px;
+}
+
+
+textarea.form-control {
+    min-height: 110px;
+}
+
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 3px rgba(22, 131, 255, 0.10);
+}
+
+
+.form-text {
+    font-size: 11px;
+}
+
+
+.form-control:disabled,
+.form-select:disabled {
+    background-color: #f8fafc;
+
+    opacity: 1;
+}
+
 /* Mobile */
 
 @media (max-width: 992px) {
