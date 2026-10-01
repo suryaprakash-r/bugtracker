@@ -698,6 +698,118 @@ textarea.form-control {
     opacity: 1;
 }
 
+
+/* =========================================================
+   Notification Navbar
+   ========================================================= */
+
+.notification-navbar-link {
+    position: relative;
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   Bell Circle
+   ========================================================= */
+
+.notification-bell-circle {
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: inherit;
+    background: transparent;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.notification-navbar-link:hover .notification-bell-circle {
+    background: #f1f3f7;
+}
+
+
+/* =========================================================
+   Unread Notification State
+   ========================================================= */
+
+.notification-navbar-link.has-unread .notification-bell-circle {
+    background: #fff1f2;
+    color: #dc3545;
+}
+
+.notification-navbar-link.has-unread:hover .notification-bell-circle {
+    background: #ffe1e5;
+    color: #c82333;
+}
+
+
+/* =========================================================
+   Notification Count Badge
+   ========================================================= */
+
+.notification-badge {
+    position: absolute;
+
+    top: -2px;
+    right: -3px;
+
+    min-width: 19px;
+    height: 19px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 5px;
+
+    border-radius: 999px;
+
+    background: #dc3545;
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+
+    border: 2px solid #ffffff;
+
+    box-sizing: border-box;
+
+    z-index: 2;
+}
+
+@keyframes notification-pulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+.notification-navbar-link.has-unread .notification-bell-circle {
+    animation: notification-pulse 2s ease-in-out infinite;
+}
+
+
 /* Mobile */
 
 @media (max-width: 992px) {

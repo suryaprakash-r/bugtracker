@@ -1,0 +1,294 @@
+{% extends "base/base.html" %}
+
+{% block navbar_title %}
+    Notifications
+{% endblock %}
+
+{% block extra_css %}
+    {% load static %}
+    <link
+        rel="stylesheet"
+        href="{% static 'css/notifications.css' %}"
+    >
+{% endblock %}
+
+{% block content %}
+
+<div class="notifications-page">
+
+    <!-- =====================================================
+         Page Header
+         ===================================================== -->
+
+    <div class="notifications-page-header">
+
+        <div>
+            <h1 class="notifications-page-title">
+                Notifications
+            </h1>
+
+            <p class="notifications-page-subtitle">
+                Stay updated with important activity in your projects.
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         Notification List
+         ===================================================== -->
+
+    <div class="notifications-card">
+
+        {% if notifications %}
+
+            <div class="notification-list">
+
+                {% for notification in notifications %}
+
+                    <article
+                        class="
+                            notification-item
+                            {% if not notification.is_read %}
+                                notification-unread
+                            {% endif %}
+                        "
+                    >
+
+                        <!-- Icon -->
+
+                        <div class="notification-icon">
+
+                            {% if notification.notification_type == "BUG_ASSIGNED" %}
+
+                                <i class="bi bi-person-check-fill"></i>
+
+                            {% elif notification.notification_type == "STATUS_CHANGED" %}
+
+                                <i class="bi bi-arrow-repeat"></i>
+
+                            {% elif notification.notification_type == "COMMENT_ADDED" %}
+
+                                <i class="bi bi-chat-left-text-fill"></i>
+
+                            {% elif notification.notification_type == "PROJECT_ADDED" %}
+
+                                <i class="bi bi-folder-plus"></i>
+
+                            {% else %}
+
+                                <i class="bi bi-bell-fill"></i>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <!-- Notification Content -->
+
+                        <div class="notification-content">
+
+                            <div class="notification-content-header">
+
+                                <div>
+
+                                    <h3 class="notification-title">
+                                        {{ notification.title }}
+                                    </h3>
+
+                                    {% if not notification.is_read %}
+
+                                        <span class="notification-unread-badge">
+                                            New
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <time
+                                    class="notification-time"
+                                    datetime="{{ notification.created_at|date:'c' }}"
+                                >
+                                    {{ notification.created_at|date:"d M Y, h:i A" }}
+                                </time>
+
+                            </div>
+
+
+                            <p class="notification-message">
+                                {{ notification.message }}
+                            </p>
+
+
+                            <div class="notification-meta">
+
+                                <span class="notification-type">
+                                    {{ notification.get_notification_type_display }}
+                                </span>
+
+
+                                {% if notification.bug %}
+
+                                    <a
+                                        href="{% url 'bugs:detail' notification.bug.id %}"
+                                        class="notification-related-link"
+                                    >
+                                        <i class="bi bi-bug"></i>
+                                        {{ notification.bug.bug_code }}
+                                    </a>
+
+                                {% elif notification.project %}
+
+                                    <a
+                                        href="{% url 'projects:detail' notification.project.id %}"
+                                        class="notification-related-link"
+                                    >
+                                        <i class="bi bi-folder"></i>
+                                        {{ notification.project.project_key }}
+                                    </a>
+
+                                {% endif %}
+
+                            </div>
+
+                            <div class="notification-actions">
+
+                                {% if notification.is_read %}
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'notifications:mark_unread' notification.id %}"
+                                    >
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="notification-action-button"
+                                            title="Mark as unread"
+                                        >
+                                            <i class="bi bi-envelope"></i>
+                                            Mark as unread
+                                        </button>
+                                    </form>
+
+                                {% else %}
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'notifications:mark_read' notification.id %}"
+                                    >
+                                        {% csrf_token %}
+
+                                        <button
+                                            type="submit"
+                                            class="notification-action-button"
+                                            title="Mark as read"
+                                        >
+                                            <i class="bi bi-check2"></i>
+                                            Mark as read
+                                        </button>
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- =================================================
+                 Pagination
+                 ================================================= -->
+
+            {% if page_obj.has_other_pages %}
+
+                <div class="notifications-pagination">
+
+                    {% if page_obj.has_previous %}
+
+                        <a
+                            href="?page={{ page_obj.previous_page_number }}"
+                            class="notification-page-button"
+                        >
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+
+                    {% endif %}
+
+
+                    {% for page_num in page_obj.paginator.page_range %}
+
+                        {% if page_num == page_obj.number %}
+
+                            <span class="notification-page-button active">
+                                {{ page_num }}
+                            </span>
+
+                        {% else %}
+
+                            <a
+                                href="?page={{ page_num }}"
+                                class="notification-page-button"
+                            >
+                                {{ page_num }}
+                            </a>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+
+                    {% if page_obj.has_next %}
+
+                        <a
+                            href="?page={{ page_obj.next_page_number }}"
+                            class="notification-page-button"
+                        >
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+
+        {% else %}
+
+            <!-- =================================================
+                 Empty State
+                 ================================================= -->
+
+            <div class="notifications-empty">
+
+                <div class="notifications-empty-icon">
+                    <i class="bi bi-bell-slash"></i>
+                </div>
+
+                <h2>
+                    No notifications yet
+                </h2>
+
+                <p>
+                    You're all caught up. Important project activity
+                    will appear here.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

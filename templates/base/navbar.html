@@ -28,13 +28,26 @@
 
         <!-- Notifications -->
         <a
-            href="#"
-            class="navbar-icon"
+            href="{% url 'notifications:list' %}"
+            class="navbar-icon notification-navbar-link {% if unread_notification_count > 0 %}has-unread{% endif %}"
             title="Notifications"
+            aria-label="Notifications"
         >
-            <i class="bi bi-bell"></i>
+            <span class="notification-bell-circle">
+                <i class="bi bi-bell"></i>
+            </span>
 
-            <span class="notification-dot"></span>
+            {% if unread_notification_count > 0 %}
+
+                <span class="notification-badge">
+                    {% if unread_notification_count > 99 %}
+                        99+
+                    {% else %}
+                        {{ unread_notification_count }}
+                    {% endif %}
+                </span>
+
+            {% endif %}
         </a>
 
 
