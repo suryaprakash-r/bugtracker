@@ -1,70 +1,215 @@
 {% extends "base/base.html" %}
 
+{% load static %}
+{% load permissions %}
+
+
 {% block title %}
 Bugs | BugTracker
 {% endblock %}
+
 
 {% block navbar_title %}
 Bugs
 {% endblock %}
 
-{% block content %}
 
-<h1>Bug List</h1>
+{% block extra_css %}
 
-    {% load permissions %}
-
-    {% if request.user|has_permission:"create_bug" %}
-        <p>
-            <a href="{% url 'bugs:create' %}">
-                Create Bug
-            </a>
-        </p>
-    {% endif %}
-
-    <hr>
-
-    {% for bug in bugs %}
-
-        <article>
-
-            <h2>
-                <a href="{% url 'bugs:detail' bug.id %}">
-                    {{ bug.bug_code }}
-                </a>
-            </h2>
-
-            <p>
-                {{ bug.title }}
-            </p>
-
-            <p>
-                Status:
-                {{ bug.get_status_display }}
-            </p>
-
-            <p>
-                Assigned:
-                {% if bug.assigned_to %}
-                    {{ bug.assigned_to.username }}
-                {% else %}
-                    Unassigned
-                {% endif %}
-            </p>
-
-            <a href="{% url 'bugs:detail' bug.id %}">
-                View Bug
-            </a>
-
-        </article>
-
-        <hr>
-
-    {% empty %}
-
-        <p>No bugs found.</p>
-
-    {% endfor %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/bugs.css' %}"
+>
 
 {% endblock %}
 
+
+{% block content %}
+
+<div class="bug-list-header">
+
+    <div>
+
+        <h1 class="bug-list-title">
+            Bugs
+        </h1>
+
+        <p class="bug-list-subtitle">
+            Track, manage and resolve application issues.
+        </p>
+
+    </div>
+
+
+    {% if request.user|has_permission:"create_bug" %}
+
+        <a
+            href="{% url 'bugs:create' %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-plus-lg me-1"></i>
+            Report Bug
+        </a>
+
+    {% endif %}
+
+</div>
+
+
+<!-- =====================================================
+     Filters
+     ===================================================== -->
+
+<div class="dashboard-card bug-filter-card">
+
+    <div class="dashboard-card-body">
+
+        <form
+            method="get"
+            id="bugFilterForm"
+            class="bug-filter-form"
+        >
+
+            <!-- Search -->
+
+            <div class="bug-search-wrapper">
+
+                <i class="bi bi-search bug-search-icon"></i>
+
+                <input
+                    type="text"
+                    name="search"
+                    id="bugSearch"
+                    class="form-control bug-search-input"
+                    placeholder="Search bugs..."
+                    value="{{ search_query }}"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- Status -->
+
+            <select
+                name="status"
+                id="bugStatus"
+                class="form-select bug-filter-select"
+            >
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                {% for value, label in status_choices %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if status_filter == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- Severity -->
+
+            <select
+                name="severity"
+                id="bugSeverity"
+                class="form-select bug-filter-select"
+            >
+
+                <option value="">
+                    All Severities
+                </option>
+
+                {% for value, label in severity_choices %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if severity_filter == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- Priority -->
+
+            <select
+                name="priority"
+                id="bugPriority"
+                class="form-select bug-filter-select"
+            >
+
+                <option value="">
+                    All Priorities
+                </option>
+
+                {% for value, label in priority_choices %}
+
+                    <option
+                        value="{{ value }}"
+                        {% if priority_filter == value %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ label }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- Clear -->
+
+            <button
+                type="button"
+                class="btn btn-light"
+                id="clearBugFilters"
+            >
+                <i class="bi bi-x-lg me-1"></i>
+                Clear
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     Realtime Results
+     ===================================================== -->
+
+<div id="bugResults">
+
+    {% include "bugs/_bug_list_results.html" %}
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+    window.BUG_LIST_URL = "{% url 'bugs:list' %}";
+</script>
+
+<script src="{% static 'js/bugs.js' %}"></script>
+
+{% endblock %}

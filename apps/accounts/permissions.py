@@ -29,6 +29,8 @@ class Permission:
     VIEW_ACTIVITY_LOG = "view_activity_log"
     
     VIEW_PROJECT = "view_project"
+    
+    DELETE_ATTACHMENT = "delete_attachment"
 
 ROLE_PERMISSIONS = {
     "ADMIN": {
@@ -47,6 +49,7 @@ ROLE_PERMISSIONS = {
         Permission.VIEW_REPORTS,
         Permission.VIEW_ACTIVITY_LOG,
         Permission.VIEW_PROJECT,
+        Permission.DELETE_ATTACHMENT,
     },
 
     "PROJECT_MANAGER": {
@@ -60,6 +63,7 @@ ROLE_PERMISSIONS = {
         Permission.ADD_ATTACHMENT,
         Permission.VIEW_REPORTS,
         Permission.VIEW_PROJECT,
+        Permission.DELETE_ATTACHMENT,
     },
 
     "DEVELOPER": {
@@ -69,6 +73,7 @@ ROLE_PERMISSIONS = {
         Permission.ADD_COMMENT,
         Permission.ADD_ATTACHMENT,
         Permission.VIEW_PROJECT,
+        Permission.DELETE_ATTACHMENT,
     },
 
     "TESTER": {
@@ -79,6 +84,7 @@ ROLE_PERMISSIONS = {
         Permission.ADD_COMMENT,
         Permission.ADD_ATTACHMENT,
         Permission.VIEW_PROJECT,
+        Permission.DELETE_ATTACHMENT,
     },
 }
 
@@ -270,5 +276,73 @@ def can_create_bug(user, project):
             user=user,
             is_active=True,
         ).exists()
+
+    return False
+
+def can_assign_bug(user, bug):
+    """
+    Return True when the user is allowed to assign this bug.
+    """
+
+    if not user or not user.is_authenticated:
+        return False
+
+    if user.is_superuser:
+        return True
+
+    if user.role == User.Role.ADMIN:
+        return True
+
+    if user.role == User.Role.PROJECT_MANAGER:
+        return bug.project.manager_id == user.id
+
+    return False
+
+def can_add_comment(user, bug):
+    """
+    Return True when the user can add a comment to the bug.
+    """
+
+    if not user or not user.is_authenticated:
+        return False
+
+    if not user_has_permission(
+        user,
+        Permission.ADD_COMMENT,
+    ):
+        return False
+
+    return can_view_bug(
+        user,
+        bug,
+    )
+    
+
+def can_delete_attachment(user, attachment):
+    """
+    Check whether the user is allowed to delete this attachment.
+    """
+
+    if not user.is_authenticated:
+        return False
+
+    if user.is_superuser or user.role == "ADMIN":
+        return True
+
+    if not user_has_permission(user, Permission.DELETE_ATTACHMENT):
+        return False
+
+    bug = attachment.bug
+    project = bug.project
+
+    # Project Manager can delete attachments
+    # from projects they manage.
+    if user.role == "PROJECT_MANAGER":
+        return project.manager_id == user.id
+
+    # Developers/Testers can delete only
+    # attachments they personally uploaded.
+    if user.role in {"DEVELOPER", "TESTER"}:
+        return attachment.uploaded_by_id == user.id
 
     return False

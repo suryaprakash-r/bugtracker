@@ -1,0 +1,484 @@
+{% load permissions %}
+
+<div class="dashboard-card">
+
+    {% if bugs %}
+
+        <div class="bug-table-wrapper">
+
+            <table class="table bug-list-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Bug ID</th>
+
+                        <th>Title</th>
+
+                        <th>Project</th>
+
+                        <th>Severity</th>
+
+                        <th>Priority</th>
+
+                        <th>Status</th>
+
+                        <th>Assigned To</th>
+
+                        <th class="text-end">
+                            Actions
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for bug in bugs %}
+
+                    <tr>
+
+                        <!-- Bug Code -->
+
+                        <td>
+
+                            <a
+                                href="{% url 'bugs:detail' bug.id %}"
+                                class="bug-list-code"
+                            >
+                                {{ bug.bug_code }}
+                            </a>
+
+                        </td>
+
+
+                        <!-- Title -->
+
+                        <td>
+
+                            <a
+                                href="{% url 'bugs:detail' bug.id %}"
+                                class="bug-list-title"
+                                title="{{ bug.title }}"
+                            >
+                                {{ bug.title }}
+                            </a>
+
+                        </td>
+
+
+                        <!-- Project -->
+
+                        <td>
+
+                            <a
+                                href="{% url 'projects:detail' bug.project.id %}"
+                                class="bug-project-link"
+                            >
+                                {{ bug.project.project_key }}
+                            </a>
+
+                        </td>
+
+
+                        <!-- Severity -->
+
+                        <td>
+
+                            {% if bug.severity == "CRITICAL" %}
+
+                                <span class="dashboard-badge severity-critical">
+                                    {{ bug.get_severity_display }}
+                                </span>
+
+                            {% elif bug.severity == "HIGH" %}
+
+                                <span class="dashboard-badge severity-high">
+                                    {{ bug.get_severity_display }}
+                                </span>
+
+                            {% elif bug.severity == "MEDIUM" %}
+
+                                <span class="dashboard-badge severity-medium">
+                                    {{ bug.get_severity_display }}
+                                </span>
+
+                            {% elif bug.severity == "LOW" %}
+
+                                <span class="dashboard-badge severity-low">
+                                    {{ bug.get_severity_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Priority -->
+
+                        <td>
+
+                            {% if bug.priority == "URGENT" %}
+
+                                <span class="dashboard-badge priority-urgent">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% elif bug.priority == "HIGH" %}
+
+                                <span class="dashboard-badge priority-high">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% elif bug.priority == "MEDIUM" %}
+
+                                <span class="dashboard-badge priority-medium">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% elif bug.priority == "LOW" %}
+
+                                <span class="dashboard-badge priority-low">
+                                    {{ bug.get_priority_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Status -->
+
+                        <td>
+
+                            {% if bug.status == "NEW" %}
+
+                                <span class="dashboard-badge badge-new">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "ASSIGNED" %}
+
+                                <span class="dashboard-badge badge-assigned">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "IN_PROGRESS" %}
+
+                                <span class="dashboard-badge badge-in-progress">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "RESOLVED" %}
+
+                                <span class="dashboard-badge badge-resolved">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "TESTING" %}
+
+                                <span class="dashboard-badge badge-testing">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "CLOSED" %}
+
+                                <span class="dashboard-badge badge-closed">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% elif bug.status == "REOPENED" %}
+
+                                <span class="dashboard-badge badge-reopened">
+                                    {{ bug.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Assigned To -->
+
+                        <td>
+
+                            {% if bug.assigned_to %}
+
+                                <span class="bug-assignee-name">
+
+                                    {% if bug.assigned_to.get_full_name %}
+                                        {{ bug.assigned_to.get_full_name }}
+                                    {% else %}
+                                        {{ bug.assigned_to.username }}
+                                    {% endif %}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="text-muted">
+                                    Unassigned
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- Actions -->
+
+                        <td>
+
+                            <div class="bug-actions">
+
+                                <!-- View -->
+
+                                <a
+                                    href="{% url 'bugs:detail' bug.id %}"
+                                    class="btn btn-sm btn-outline-primary bug-action-btn"
+                                    title="View Bug"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+
+                                <!-- Update -->
+
+                                {% if request.user|can_update_bug:bug %}
+
+                                    <a
+                                        href="{% url 'bugs:update' bug.id %}"
+                                        class="btn btn-sm btn-outline-secondary bug-action-btn"
+                                        title="Update Bug"
+                                    >
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+
+                                {% endif %}
+
+
+                                <!-- Assign -->
+
+                                {% if request.user|has_permission:"assign_bug" %}
+
+                                    {% if bug.status == "NEW" or bug.status == "ASSIGNED" %}
+
+                                        {% if request.user|can_view_bug:bug %}
+
+                                            <a
+                                                href="{% url 'bugs:assign' bug.id %}"
+                                                class="btn btn-sm btn-outline-secondary bug-action-btn"
+                                                title="Assign Bug"
+                                            >
+                                                <i class="bi bi-person-check"></i>
+                                            </a>
+
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- =================================================
+             Pagination
+             ================================================= -->
+
+        <div class="px-4 pb-4">
+
+            <div class="bug-pagination">
+
+                <div class="bug-pagination-info">
+
+                    Showing
+                    <strong>
+                        {{ page_obj.start_index }}
+                    </strong>
+                    –
+                    <strong>
+                        {{ page_obj.end_index }}
+                    </strong>
+                    of
+                    <strong>
+                        {{ page_obj.paginator.count }}
+                    </strong>
+                    bug{{ page_obj.paginator.count|pluralize }}
+
+                </div>
+
+
+                {% if page_obj.paginator.num_pages > 1 %}
+
+                    <nav aria-label="Bug pagination">
+
+                        <ul class="pagination">
+
+
+                            <!-- Previous -->
+
+                            {% if page_obj.has_previous %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link bug-page-link"
+                                        href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&severity={{ severity_filter|urlencode }}&priority={{ priority_filter|urlencode }}&page={{ page_obj.previous_page_number }}"
+                                        data-page="{{ page_obj.previous_page_number }}"
+                                    >
+                                        <i class="bi bi-chevron-left"></i>
+                                    </a>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </span>
+
+                                </li>
+
+                            {% endif %}
+
+
+                            <!-- Page Numbers -->
+
+                            {% for page_number in page_obj.paginator.page_range %}
+
+                                {% if page_number == page_obj.number %}
+
+                                    <li class="page-item active">
+
+                                        <span class="page-link">
+                                            {{ page_number }}
+                                        </span>
+
+                                    </li>
+
+                                {% elif page_number >= page_obj.number|add:"-2" and page_number <= page_obj.number|add:"2" %}
+
+                                    <li class="page-item">
+
+                                        <a
+                                            class="page-link bug-page-link"
+                                            href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&severity={{ severity_filter|urlencode }}&priority={{ priority_filter|urlencode }}&page={{ page_number }}"
+                                            data-page="{{ page_number }}"
+                                        >
+                                            {{ page_number }}
+                                        </a>
+
+                                    </li>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+
+                            <!-- Next -->
+
+                            {% if page_obj.has_next %}
+
+                                <li class="page-item">
+
+                                    <a
+                                        class="page-link bug-page-link"
+                                        href="?search={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&severity={{ severity_filter|urlencode }}&priority={{ priority_filter|urlencode }}&page={{ page_obj.next_page_number }}"
+                                        data-page="{{ page_obj.next_page_number }}"
+                                    >
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+
+                                </li>
+
+                            {% else %}
+
+                                <li class="page-item disabled">
+
+                                    <span class="page-link">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </span>
+
+                                </li>
+
+                            {% endif %}
+
+                        </ul>
+
+                    </nav>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+        <div class="bug-empty-state">
+
+            <i class="bi bi-bug"></i>
+
+            <h3>
+                No bugs found
+            </h3>
+
+
+            {% if search_query or status_filter or severity_filter or priority_filter %}
+
+                <p>
+                    No bugs match your current search or filters.
+                </p>
+
+                <button
+                    type="button"
+                    class="btn btn-sm btn-light"
+                    id="clearBugFiltersEmpty"
+                >
+                    Clear Filters
+                </button>
+
+            {% else %}
+
+                <p>
+                    There are no bugs available yet.
+                </p>
+
+                {% if request.user|has_permission:"create_bug" %}
+
+                    <a
+                        href="{% url 'bugs:create' %}"
+                        class="btn btn-sm btn-primary"
+                    >
+                        <i class="bi bi-plus-lg me-1"></i>
+                        Report Bug
+                    </a>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>

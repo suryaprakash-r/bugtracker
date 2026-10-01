@@ -1,18 +1,367 @@
 {% extends "base/base.html" %}
 
+
 {% block title %}
-Update Bug | BugTracker
+Update {{ bug.bug_code }} | BugTracker
 {% endblock %}
+
 
 {% block navbar_title %}
 Update Bug
 {% endblock %}
 
-{% block content %}
-<h1>Update Bug</h1>
 
-    <p>
-        You have permission to update bugs.
-    </p>
+{% block content %}
+
+<div class="bug-page-header">
+
+    <div>
+
+        <div class="bug-code-display">
+            {{ bug.bug_code }}
+        </div>
+
+        <h1 class="bug-title-display">
+            Update Bug
+        </h1>
+
+        <p class="text-muted mb-0 mt-2">
+            Update the descriptive information for this bug.
+        </p>
+
+    </div>
+
+</div>
+
+
+<div class="row">
+
+    <div class="col-12 col-xl-10">
+
+        <div class="dashboard-card">
+
+            <div class="dashboard-card-header">
+
+                <div>
+
+                    <h3 class="dashboard-card-title mb-1">
+                        Bug Information
+                    </h3>
+
+                    <small class="text-muted">
+                        Project: {{ bug.project.project_key }}
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-card-body">
+
+                <form
+                    method="post"
+                    novalidate
+                >
+
+                    {% csrf_token %}
+
+
+                    {% if form.non_field_errors %}
+
+                        <div class="alert alert-danger">
+
+                            {% for error in form.non_field_errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="row g-4">
+
+
+                        <!-- Title -->
+
+                        <div class="col-12">
+
+                            <label
+                                for="{{ form.title.id_for_label }}"
+                                class="form-label"
+                            >
+                                Bug Title
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            {{ form.title }}
+
+                            {% for error in form.title.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Severity -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="{{ form.severity.id_for_label }}"
+                                class="form-label"
+                            >
+                                Severity
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            {{ form.severity }}
+
+                            {% for error in form.severity.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Priority -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="{{ form.priority.id_for_label }}"
+                                class="form-label"
+                            >
+                                Priority
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            {{ form.priority }}
+
+                            {% for error in form.priority.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Environment -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="{{ form.environment.id_for_label }}"
+                                class="form-label"
+                            >
+                                Environment
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            {{ form.environment }}
+
+                            {% for error in form.environment.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Browser -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="{{ form.browser.id_for_label }}"
+                                class="form-label"
+                            >
+                                Browser
+                            </label>
+
+                            {{ form.browser }}
+
+                            {% for error in form.browser.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Operating System -->
+
+                        <div class="col-12">
+
+                            <label
+                                for="{{ form.operating_system.id_for_label }}"
+                                class="form-label"
+                            >
+                                Operating System
+                            </label>
+
+                            {{ form.operating_system }}
+
+                            {% for error in form.operating_system.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Description -->
+
+                        <div class="col-12">
+
+                            <label
+                                for="{{ form.description.id_for_label }}"
+                                class="form-label"
+                            >
+                                Description
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            {{ form.description }}
+
+                            {% for error in form.description.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Steps -->
+
+                        <div class="col-12">
+
+                            <label
+                                for="{{ form.steps_to_reproduce.id_for_label }}"
+                                class="form-label"
+                            >
+                                Steps to Reproduce
+                            </label>
+
+                            {{ form.steps_to_reproduce }}
+
+                            {% for error in form.steps_to_reproduce.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Expected -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="{{ form.expected_result.id_for_label }}"
+                                class="form-label"
+                            >
+                                Expected Result
+                            </label>
+
+                            {{ form.expected_result }}
+
+                            {% for error in form.expected_result.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Actual -->
+
+                        <div class="col-md-6">
+
+                            <label
+                                for="{{ form.actual_result.id_for_label }}"
+                                class="form-label"
+                            >
+                                Actual Result
+                            </label>
+
+                            {{ form.actual_result }}
+
+                            {% for error in form.actual_result.errors %}
+
+                                <div class="text-danger small mt-1">
+                                    {{ error }}
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Actions -->
+
+                    <div
+                        class="d-flex justify-content-end gap-2 mt-4 pt-4 border-top"
+                    >
+
+                        <a
+                            href="{% url 'bugs:detail' bug.id %}"
+                            class="btn btn-light"
+                        >
+                            Cancel
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            <i class="bi bi-check-lg me-1"></i>
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %}

@@ -1,0 +1,47 @@
+<div class="bug-comment-item">
+
+    <div class="bug-comment-avatar">
+
+        {{ comment.user.username|first|upper }}
+
+    </div>
+
+
+    <div class="bug-comment-content">
+
+        <div class="bug-comment-header">
+
+            <div>
+
+                <span class="bug-comment-author">
+                    {% if comment.user.get_full_name %}
+                        {{ comment.user.get_full_name }}
+                    {% else %}
+                        {{ comment.user.username }}
+                    {% endif %}
+                </span>
+
+                <span class="bug-comment-role">
+                    {{ comment.user.get_role_display }}
+                </span>
+
+            </div>
+
+
+            <time
+                class="bug-comment-time"
+                datetime="{{ comment.created_at|date:'c' }}"
+            >
+                {{ comment.created_at|date:"d M Y, h:i A" }}
+            </time>
+
+        </div>
+
+
+        <div class="bug-comment-message">
+            {{ comment.message|linebreaksbr }}
+        </div>
+
+    </div>
+
+</div>

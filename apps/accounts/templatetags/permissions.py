@@ -28,3 +28,8 @@ def can_view_bug_filter(user, bug):
 @register.filter(name="can_manage_project")
 def can_manage_project_filter(user, project):
     return can_manage_project(user, project)
+
+@register.filter
+def can_delete_attachment(user, attachment):
+    from apps.accounts.permissions import can_delete_attachment as check_permission
+    return check_permission(user, attachment)
