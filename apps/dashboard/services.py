@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 
 from apps.bugs.models import Bug
 from apps.projects.models import Project
@@ -102,6 +102,114 @@ def get_bug_distribution(bugs, field_name, choices):
 
     return distribution
 
+def get_developer_workload(bugs):
+    """
+    Return workload statistics grouped by developer.
+
+    Only bugs currently assigned to a developer are included.
+    """
+
+    workload = (
+        bugs
+        .filter(
+            assigned_to__isnull=False,
+            assigned_to__role="DEVELOPER",
+        )
+        .values(
+            "assigned_to",
+            "assigned_to__username",
+            "assigned_to__first_name",
+            "assigned_to__last_name",
+        )
+        .annotate(
+            total=Count("id"),
+
+            open=Count(
+                "id",
+                filter=Q(
+                    status__in=OPEN_STATUSES
+                ),
+            ),
+
+            resolved=Count(
+                "id",
+                filter=Q(
+                    status__in=RESOLVED_STATUSES
+                ),
+            ),
+
+            critical=Count(
+                "id",
+                filter=Q(
+                    severity="CRITICAL"
+                ),
+            ),
+        )
+        .order_by("-open", "-total")
+    )
+
+    results = []
+
+    for item in workload:
+
+        first_name = (
+            item["assigned_to__first_name"] or ""
+        ).strip()
+
+        last_name = (
+            item["assigned_to__last_name"] or ""
+        ).strip()
+
+        full_name = " ".join(
+            part
+            for part in [first_name, last_name]
+            if part
+        )
+
+        display_name = (
+            full_name
+            or item["assigned_to__username"]
+        )
+
+        results.append({
+            "user_id": item["assigned_to"],
+            "username": item["assigned_to__username"],
+            "name": display_name,
+            "total": item["total"],
+            "open": item["open"],
+            "resolved": item["resolved"],
+            "critical": item["critical"],
+        })
+
+    return results
+
+def get_testing_workload(bugs):
+    """
+    Return testing-related workload statistics.
+
+    Because the current Bug model does not assign a tester
+    directly, these values represent the testing queue across
+    the user's visible bugs.
+    """
+
+    ready_for_testing = bugs.filter(
+        status=Bug.Status.RESOLVED
+    ).count()
+
+    testing_in_progress = bugs.filter(
+        status=Bug.Status.TESTING
+    ).count()
+
+    reopened_bugs = bugs.filter(
+        status=Bug.Status.REOPENED
+    ).count()
+
+    return {
+        "ready_for_testing": ready_for_testing,
+        "testing_in_progress": testing_in_progress,
+        "reopened_bugs": reopened_bugs,
+    }
+
 def get_dashboard_data(user):
     """
     Build all data required by the dashboard.
@@ -164,6 +272,20 @@ def get_dashboard_data(user):
         "priority",
         Bug.Priority.choices,
     )
+    
+    severity_counts = get_bug_distribution(
+        bugs,
+        "severity",
+        Bug.Severity.choices,
+    )
+    
+    developer_workload = get_developer_workload(
+        bugs
+    )
+
+    testing_workload = get_testing_workload(
+        bugs
+    )
 
     # ---------------------------------------------------------
     # Recent bugs
@@ -196,5 +318,10 @@ def get_dashboard_data(user):
 
         "status_counts": status_counts,
         "priority_counts": priority_counts,
+        "severity_counts": severity_counts,
+        
+        "developer_workload": developer_workload,
+        "testing_workload": testing_workload,
+        
         "recent_bugs": recent_bugs,
     }

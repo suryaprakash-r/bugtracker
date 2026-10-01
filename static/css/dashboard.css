@@ -493,7 +493,373 @@
     margin: 0;
     font-size: 13px;
 }
+/* =========================================================
+   Priority / Severity Chart Height
+   ========================================================= */
 
+.analytics-chart-container {
+    height: 240px;
+}
+
+/* =========================================================
+   Workload Analytics
+   ========================================================= */
+
+.workload-card {
+    height: 100%;
+}
+
+
+/* =========================================================
+   Developer Workload Table
+   ========================================================= */
+
+.workload-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.workload-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.workload-table th {
+    padding: 11px 10px;
+    border-bottom: 1px solid var(--border);
+
+    color: var(--text-secondary);
+    background: #f8fafc;
+
+    font-size: 10px;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.workload-table td {
+    padding: 13px 10px;
+    border-bottom: 1px solid var(--border);
+
+    color: var(--text-primary);
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.workload-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.workload-table tbody tr:hover {
+    background: #fafcff;
+}
+
+
+/* =========================================================
+   Developer Identity
+   ========================================================= */
+
+.workload-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 150px;
+}
+
+.workload-avatar {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e8f2ff;
+    color: var(--primary);
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.workload-user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.workload-user-info strong {
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.workload-user-info span {
+    margin-top: 2px;
+    color: var(--text-secondary);
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   Workload Numbers
+   ========================================================= */
+
+.workload-total,
+.workload-number,
+.workload-zero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 28px;
+    height: 28px;
+
+    padding: 0 7px;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.workload-total {
+    background: #eef2f7;
+    color: #475569;
+}
+
+.workload-open {
+    background: #fff7e6;
+    color: #d97706;
+}
+
+.workload-resolved {
+    background: #eaf8ef;
+    color: #15803d;
+}
+
+.workload-critical {
+    background: #fff0f0;
+    color: #dc2626;
+}
+
+.workload-zero {
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   Testing Queue
+   ========================================================= */
+
+.testing-queue-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.testing-queue-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 14px;
+
+    border: 1px solid #edf0f4;
+    border-radius: 12px;
+
+    background: #fafbfc;
+}
+
+.testing-queue-icon {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+}
+
+.testing-queue-icon.ready {
+    background: #fff7e6;
+    color: #d97706;
+}
+
+.testing-queue-icon.testing {
+    background: #eaf2ff;
+    color: #2563eb;
+}
+
+.testing-queue-icon.reopened {
+    background: #fff0f0;
+    color: #dc2626;
+}
+
+.testing-queue-content {
+    flex: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.testing-queue-content span {
+    color: #596273;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.testing-queue-content strong {
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* =========================================================
+   Severity Analytics
+   ========================================================= */
+
+.severity-analytics-wrapper {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+    gap: 32px;
+    align-items: center;
+}
+
+.severity-chart-container {
+    height: 240px;
+}
+
+.severity-summary-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.severity-summary-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 12px 14px;
+
+    border: 1px solid #edf0f4;
+    border-radius: 10px;
+
+    background: #fafbfc;
+}
+
+.severity-summary-main {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
+.severity-summary-label {
+    color: #4f5969;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.severity-summary-values {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.severity-summary-values strong {
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.severity-summary-values span {
+    color: #7c8696;
+    font-size: 12px;
+}
+
+.severity-summary-indicator {
+    width: 9px;
+    height: 9px;
+    min-width: 9px;
+    border-radius: 50%;
+}
+
+.severity-indicator-critical {
+    background: #ef4444;
+}
+
+.severity-indicator-high {
+    background: #f97316;
+}
+
+.severity-indicator-medium {
+    background: #3b82f6;
+}
+
+.severity-indicator-low {
+    background: #94a3b8;
+}
+
+
+/* =========================================================
+   Severity Analytics Responsive
+   ========================================================= */
+
+@media (max-width: 991px) {
+
+    .severity-analytics-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .severity-chart-container {
+        height: 230px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .severity-chart-container {
+        height: 220px;
+    }
+
+    .severity-summary-item {
+        padding: 10px 12px;
+    }
+
+    .severity-summary-label {
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   Workload Responsive
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .workload-table {
+        min-width: 560px;
+    }
+
+    .testing-queue-item {
+        padding: 12px;
+    }
+
+}
 
 /* =========================================================
    Small Screens
@@ -531,6 +897,9 @@
 
     .recent-bugs-table {
         min-width: 700px;
+    }
+    .analytics-chart-container {
+        height: 220px;
     }
 }
 

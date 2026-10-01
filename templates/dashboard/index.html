@@ -219,49 +219,48 @@ Dashboard
 
                     {% if dashboard.status_counts %}
 
-                        <div class="status-analytics-wrapper">
+                    <div class="status-analytics-wrapper">
 
-                            <div class="chart-container status-chart-container">
-                                <canvas id="statusChart"></canvas>
-                            </div>
+                        <div class="chart-container status-chart-container">
+                            <canvas id="statusChart"></canvas>
+                        </div>
 
-                            <div class="status-summary-list">
+                        <div class="status-summary-list">
 
-                                {% for item in dashboard.status_counts %}
+                            {% for item in dashboard.status_counts %}
 
-                                    <div class="status-summary-item">
+                            <div class="status-summary-item">
 
-                                        <div class="status-summary-main">
+                                <div class="status-summary-main">
 
-                                            <span
-                                                class="status-summary-indicator status-indicator-{{ item.value|lower }}"
-                                            ></span>
+                                    <span
+                                        class="status-summary-indicator status-indicator-{{ item.value|lower }}"></span>
 
-                                            <span class="status-summary-label">
-                                                {{ item.label }}
-                                            </span>
+                                    <span class="status-summary-label">
+                                        {{ item.label }}
+                                    </span>
 
-                                        </div>
+                                </div>
 
-                                        <div class="status-summary-values">
-                                            <strong>{{ item.total }}</strong>
-                                            <span>{{ item.percentage }}%</span>
-                                        </div>
-
-                                    </div>
-
-                                {% endfor %}
+                                <div class="status-summary-values">
+                                    <strong>{{ item.total }}</strong>
+                                    <span>{{ item.percentage }}%</span>
+                                </div>
 
                             </div>
+
+                            {% endfor %}
 
                         </div>
+
+                    </div>
 
                     {% else %}
 
-                        <div class="dashboard-empty">
-                            <i class="bi bi-pie-chart"></i>
-                            <p>No bug status data available yet.</p>
-                        </div>
+                    <div class="dashboard-empty">
+                        <i class="bi bi-pie-chart"></i>
+                        <p>No bug status data available yet.</p>
+                    </div>
 
                     {% endif %}
 
@@ -291,22 +290,399 @@ Dashboard
 
                     {% if dashboard.priority_counts %}
 
-                        <div class="chart-container priority-chart-container">
-                            <canvas id="priorityChart"></canvas>
-                        </div>
+                    <div class="chart-container priority-chart-container">
+                        <canvas id="priorityChart"></canvas>
+                    </div>
 
                     {% else %}
 
-                        <div class="dashboard-empty">
-                            <i class="bi bi-bar-chart"></i>
-                            <p>No bug priority data available yet.</p>
-                        </div>
+                    <div class="dashboard-empty">
+                        <i class="bi bi-bar-chart"></i>
+                        <p>No bug priority data available yet.</p>
+                    </div>
 
                     {% endif %}
 
                 </div>
 
             </div>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     Severity Analytics
+     ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-12">
+
+            <div class="dashboard-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+
+                        <h3 class="dashboard-card-title">
+                            Bugs by Severity
+                        </h3>
+
+                        <p class="dashboard-card-subtitle">
+                            Severity distribution of visible bugs
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card-body">
+
+                    {% if dashboard.severity_counts %}
+
+                    <div class="severity-analytics-wrapper">
+
+                        <!-- Chart -->
+
+                        <div class="chart-container severity-chart-container">
+                            <canvas id="severityChart"></canvas>
+                        </div>
+
+
+                        <!-- Severity Summary -->
+
+                        <div class="severity-summary-list">
+
+                            {% for item in dashboard.severity_counts %}
+
+                            <div class="severity-summary-item">
+
+                                <div class="severity-summary-main">
+
+                                    <span
+                                        class="severity-summary-indicator severity-indicator-{{ item.value|lower }}"></span>
+
+                                    <span class="severity-summary-label">
+                                        {{ item.label }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="severity-summary-values">
+
+                                    <strong>
+                                        {{ item.total }}
+                                    </strong>
+
+                                    <span>
+                                        {{ item.percentage }}%
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="dashboard-empty">
+
+                        <i class="bi bi-bar-chart-fill"></i>
+
+                        <p>
+                            No bug severity data available yet.
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+     Workload Analytics
+     ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+
+        <!-- Developer Workload -->
+
+        <div class="col-12 col-xl-7">
+
+            <div class="dashboard-card workload-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+
+                        <h3 class="dashboard-card-title">
+                            Developer Workload
+                        </h3>
+
+                        <p class="dashboard-card-subtitle">
+                            Assigned bug workload across visible projects
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card-body">
+
+                    {% if dashboard.developer_workload %}
+
+                    <div class="workload-table-wrapper">
+
+                        <table class="workload-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Developer
+                                    </th>
+
+                                    <th>
+                                        Total
+                                    </th>
+
+                                    <th>
+                                        Open
+                                    </th>
+
+                                    <th>
+                                        Resolved
+                                    </th>
+
+                                    <th>
+                                        Critical
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for item in dashboard.developer_workload %}
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="workload-user">
+
+                                            <div class="workload-avatar">
+                                                {{ item.name|first|upper }}
+                                            </div>
+
+                                            <div class="workload-user-info">
+
+                                                <strong>
+                                                    {{ item.name }}
+                                                </strong>
+
+                                                <span>
+                                                    @{{ item.username }}
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        <span class="workload-total">
+                                            {{ item.total }}
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="workload-number workload-open">
+                                            {{ item.open }}
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="workload-number workload-resolved">
+                                            {{ item.resolved }}
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if item.critical > 0 %}
+
+                                        <span class="workload-number workload-critical">
+                                            {{ item.critical }}
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="workload-zero">
+                                            0
+                                        </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="dashboard-empty">
+
+                        <i class="bi bi-people"></i>
+
+                        <p>
+                            No developer workload data available yet.
+                        </p>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Testing Queue -->
+
+        <div class="col-12 col-xl-5">
+
+            <div class="dashboard-card workload-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+
+                        <h3 class="dashboard-card-title">
+                            Testing Queue
+                        </h3>
+
+                        <p class="dashboard-card-subtitle">
+                            Current testing workflow
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card-body">
+
+                    <div class="testing-queue-list">
+
+
+                        <!-- Ready for Testing -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon ready">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    Ready for Testing
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.testing_workload.ready_for_testing }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Testing in Progress -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon testing">
+                                <i class="bi bi-bug-fill"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    Testing In Progress
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.testing_workload.testing_in_progress }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Reopened -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon reopened">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    Reopened
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.testing_workload.reopened_bugs }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
     </div>
@@ -324,10 +700,7 @@ Dashboard
                 Recent Bugs
             </h3>
 
-            <a
-                href="{% url 'bugs:list' %}"
-                class="btn btn-sm btn-outline-primary"
-            >
+            <a href="{% url 'bugs:list' %}" class="btn btn-sm btn-outline-primary">
                 View All
             </a>
 
@@ -336,117 +709,109 @@ Dashboard
 
         {% if dashboard.recent_bugs %}
 
-            <div class="recent-bugs-wrapper">
+        <div class="recent-bugs-wrapper">
 
-                <table class="table recent-bugs-table">
+            <table class="table recent-bugs-table">
 
-                    <thead>
-                        <tr>
-                            <th>Bug ID</th>
-                            <th>Title</th>
-                            <th>Project</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Reporter</th>
-                        </tr>
-                    </thead>
+                <thead>
+                    <tr>
+                        <th>Bug ID</th>
+                        <th>Title</th>
+                        <th>Project</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Reporter</th>
+                    </tr>
+                </thead>
 
-                    <tbody>
+                <tbody>
 
-                        {% for bug in dashboard.recent_bugs %}
+                    {% for bug in dashboard.recent_bugs %}
 
-                            <tr>
+                    <tr>
 
-                                <td>
-                                    <a
-                                        href="{% url 'bugs:detail' bug.id %}"
-                                        class="bug-code"
-                                    >
-                                        {{ bug.bug_code }}
-                                    </a>
-                                </td>
+                        <td>
+                            <a href="{% url 'bugs:detail' bug.id %}" class="bug-code">
+                                {{ bug.bug_code }}
+                            </a>
+                        </td>
 
-                                <td>
-                                    <div
-                                        class="bug-title"
-                                        title="{{ bug.title }}"
-                                    >
-                                        {{ bug.title }}
-                                    </div>
-                                </td>
+                        <td>
+                            <div class="bug-title" title="{{ bug.title }}">
+                                {{ bug.title }}
+                            </div>
+                        </td>
 
-                                <td>
-                                    {{ bug.project.project_key }}
-                                </td>
+                        <td>
+                            {{ bug.project.project_key }}
+                        </td>
 
-                                <td>
-                                    <span
-                                        class="dashboard-badge priority-{{ bug.priority|lower }}"
-                                    >
-                                        {{ bug.get_priority_display }}
-                                    </span>
-                                </td>
+                        <td>
+                            <span class="dashboard-badge priority-{{ bug.priority|lower }}">
+                                {{ bug.get_priority_display }}
+                            </span>
+                        </td>
 
-                                <td>
+                        <td>
 
-                                    {% if bug.status == "NEW" %}
-                                        <span class="dashboard-badge badge-new">
-                                            {{ bug.get_status_display }}
-                                        </span>
+                            {% if bug.status == "NEW" %}
+                            <span class="dashboard-badge badge-new">
+                                {{ bug.get_status_display }}
+                            </span>
 
-                                    {% elif bug.status == "ASSIGNED" %}
-                                        <span class="dashboard-badge badge-assigned">
-                                            {{ bug.get_status_display }}
-                                        </span>
+                            {% elif bug.status == "ASSIGNED" %}
+                            <span class="dashboard-badge badge-assigned">
+                                {{ bug.get_status_display }}
+                            </span>
 
-                                    {% elif bug.status == "IN_PROGRESS" %}
-                                        <span class="dashboard-badge badge-in-progress">
-                                            {{ bug.get_status_display }}
-                                        </span>
+                            {% elif bug.status == "IN_PROGRESS" %}
+                            <span class="dashboard-badge badge-in-progress">
+                                {{ bug.get_status_display }}
+                            </span>
 
-                                    {% elif bug.status == "RESOLVED" %}
-                                        <span class="dashboard-badge badge-resolved">
-                                            {{ bug.get_status_display }}
-                                        </span>
+                            {% elif bug.status == "RESOLVED" %}
+                            <span class="dashboard-badge badge-resolved">
+                                {{ bug.get_status_display }}
+                            </span>
 
-                                    {% elif bug.status == "TESTING" %}
-                                        <span class="dashboard-badge badge-testing">
-                                            {{ bug.get_status_display }}
-                                        </span>
+                            {% elif bug.status == "TESTING" %}
+                            <span class="dashboard-badge badge-testing">
+                                {{ bug.get_status_display }}
+                            </span>
 
-                                    {% elif bug.status == "CLOSED" %}
-                                        <span class="dashboard-badge badge-closed">
-                                            {{ bug.get_status_display }}
-                                        </span>
+                            {% elif bug.status == "CLOSED" %}
+                            <span class="dashboard-badge badge-closed">
+                                {{ bug.get_status_display }}
+                            </span>
 
-                                    {% elif bug.status == "REOPENED" %}
-                                        <span class="dashboard-badge badge-reopened">
-                                            {{ bug.get_status_display }}
-                                        </span>
-                                    {% endif %}
+                            {% elif bug.status == "REOPENED" %}
+                            <span class="dashboard-badge badge-reopened">
+                                {{ bug.get_status_display }}
+                            </span>
+                            {% endif %}
 
-                                </td>
+                        </td>
 
-                                <td>
-                                    {{ bug.reporter.username }}
-                                </td>
+                        <td>
+                            {{ bug.reporter.username }}
+                        </td>
 
-                            </tr>
+                    </tr>
 
-                        {% endfor %}
+                    {% endfor %}
 
-                    </tbody>
+                </tbody>
 
-                </table>
+            </table>
 
-            </div>
+        </div>
 
         {% else %}
 
-            <div class="dashboard-empty">
-                <i class="bi bi-bug"></i>
-                <p>No bugs have been reported yet.</p>
-            </div>
+        <div class="dashboard-empty">
+            <i class="bi bi-bug"></i>
+            <p>No bugs have been reported yet.</p>
+        </div>
 
         {% endif %}
 
@@ -463,202 +828,390 @@ Dashboard
 
 {{ dashboard.status_counts|json_script:"status-chart-data" }}
 {{ dashboard.priority_counts|json_script:"priority-chart-data" }}
+{{ dashboard.severity_counts|json_script:"severity-chart-data" }}
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
 
-    /*
-     * =====================================================
-     * Bugs by Status
-     * =====================================================
-     */
+        /*
+         * =====================================================
+         * Bugs by Status
+         * =====================================================
+         */
 
-    const statusCanvas = document.getElementById("statusChart");
-    const statusDataElement = document.getElementById("status-chart-data");
+        const statusCanvas = document.getElementById("statusChart");
+        const statusDataElement = document.getElementById("status-chart-data");
 
-    if (statusCanvas && statusDataElement) {
+        if (statusCanvas && statusDataElement) {
 
-        const statusData = JSON.parse(statusDataElement.textContent);
+            const statusData = JSON.parse(statusDataElement.textContent);
 
-        const statusLabels = statusData.map(function (item) {
-            return item.label;
-        });
-
-        const statusValues = statusData.map(function (item) {
-            return item.total;
-        });
-
-        const statusColors = {
-            "New": "#3b82f6",
-            "Assigned": "#8b5cf6",
-            "In Progress": "#f59e0b",
-            "Resolved": "#22c55e",
-            "Testing": "#a855f7",
-            "Closed": "#64748b",
-            "Reopened": "#ef4444"
-        };
-
-        const statusBackgrounds = statusLabels.map(function (label) {
-            return statusColors[label] || "#94a3b8";
-        });
-
-        new Chart(statusCanvas, {
-            type: "doughnut",
-
-            data: {
-                labels: statusLabels,
-
-                datasets: [{
-                    data: statusValues,
-                    backgroundColor: statusBackgrounds,
-                    borderWidth: 0,
-                    hoverOffset: 6
-                }]
-            },
-
-            options: {
-
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: "68%",
-
-                plugins: {
-
-                    legend: {
-                        position: "bottom",
-
-                        labels: {
-                            usePointStyle: true,
-                            pointStyle: "circle",
-                            padding: 16,
-
-                            font: {
-                                size: 11
-                            }
-                        }
-                    },
-
-                    tooltip: {
-
-                        callbacks: {
-
-                            label: function (context) {
-
-                                const item =
-                                    statusData[context.dataIndex];
-
-                                return (
-                                    " " +
-                                    item.label +
-                                    ": " +
-                                    item.total +
-                                    " (" +
-                                    item.percentage +
-                                    "%)"
-                                );
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-
-    /*
-     * =====================================================
-     * Bugs by Priority
-     * =====================================================
-     */
-
-    const priorityCanvas =
-        document.getElementById("priorityChart");
-
-    const priorityDataElement =
-        document.getElementById("priority-chart-data");
-
-    if (priorityCanvas && priorityDataElement) {
-
-        const priorityData =
-            JSON.parse(priorityDataElement.textContent);
-
-        const priorityLabels =
-            priorityData.map(function (item) {
+            const statusLabels = statusData.map(function (item) {
                 return item.label;
             });
 
-        const priorityValues =
-            priorityData.map(function (item) {
+            const statusValues = statusData.map(function (item) {
                 return item.total;
             });
 
-        const priorityColors = {
-            "Critical": "#ef4444",
-            "Urgent": "#f97316",
-            "High": "#f59e0b",
-            "Medium": "#3b82f6",
-            "Low": "#94a3b8"
-        };
+            const statusColors = {
+                "New": "#3b82f6",
+                "Assigned": "#8b5cf6",
+                "In Progress": "#f59e0b",
+                "Resolved": "#22c55e",
+                "Testing": "#a855f7",
+                "Closed": "#64748b",
+                "Reopened": "#ef4444"
+            };
 
-        const priorityBackgrounds =
-            priorityLabels.map(function (label) {
-                return priorityColors[label] || "#94a3b8";
+            const statusBackgrounds = statusLabels.map(function (label) {
+                return statusColors[label] || "#94a3b8";
             });
 
-        new Chart(priorityCanvas, {
+            new Chart(statusCanvas, {
+                type: "doughnut",
 
-            type: "bar",
+                data: {
+                    labels: statusLabels,
 
-            data: {
-                labels: priorityLabels,
-
-                datasets: [{
-                    label: "Bugs",
-                    data: priorityValues,
-                    backgroundColor: priorityBackgrounds,
-                    borderRadius: 6,
-                    borderSkipped: false,
-                    barThickness: 28
-                }]
-            },
-
-            options: {
-
-                responsive: true,
-                maintainAspectRatio: false,
-
-                plugins: {
-                    legend: {
-                        display: false
-                    }
+                    datasets: [{
+                        data: statusValues,
+                        backgroundColor: statusBackgrounds,
+                        borderWidth: 0,
+                        hoverOffset: 6
+                    }]
                 },
 
-                scales: {
+                options: {
 
-                    y: {
-                        beginAtZero: true,
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "68%",
 
-                        ticks: {
-                            precision: 0,
-                            stepSize: 1
+                    plugins: {
+
+                        legend: {
+                            position: "bottom",
+
+                            labels: {
+                                usePointStyle: true,
+                                pointStyle: "circle",
+                                padding: 16,
+
+                                font: {
+                                    size: 11
+                                }
+                            }
                         },
 
-                        grid: {
-                            color: "#edf1f5"
-                        }
-                    },
+                        tooltip: {
 
-                    x: {
-                        grid: {
-                            display: false
+                            callbacks: {
+
+                                label: function (context) {
+
+                                    const item =
+                                        statusData[context.dataIndex];
+
+                                    return (
+                                        " " +
+                                        item.label +
+                                        ": " +
+                                        item.total +
+                                        " (" +
+                                        item.percentage +
+                                        "%)"
+                                    );
+                                }
+                            }
                         }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
 
-});
+
+        /*
+         * =====================================================
+         * Bugs by Priority
+         * =====================================================
+         */
+
+        const priorityCanvas =
+            document.getElementById("priorityChart");
+
+        const priorityDataElement =
+            document.getElementById("priority-chart-data");
+
+        if (priorityCanvas && priorityDataElement) {
+
+            const priorityData =
+                JSON.parse(priorityDataElement.textContent);
+
+            const priorityLabels =
+                priorityData.map(function (item) {
+                    return item.label;
+                });
+
+            const priorityValues =
+                priorityData.map(function (item) {
+                    return item.total;
+                });
+
+            const priorityColors = {
+                "Critical": "#ef4444",
+                "Urgent": "#f97316",
+                "High": "#f59e0b",
+                "Medium": "#3b82f6",
+                "Low": "#94a3b8"
+            };
+
+            const priorityBackgrounds =
+                priorityLabels.map(function (label) {
+                    return priorityColors[label] || "#94a3b8";
+                });
+
+            new Chart(priorityCanvas, {
+
+                type: "bar",
+
+                data: {
+                    labels: priorityLabels,
+
+                    datasets: [{
+                        label: "Bugs",
+                        data: priorityValues,
+                        backgroundColor: priorityBackgrounds,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        barThickness: 28
+                    }]
+                },
+
+                options: {
+
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+
+                    scales: {
+
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0,
+                                stepSize: 1
+                            },
+
+                            grid: {
+                                color: "#edf1f5"
+                            }
+                        },
+
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        /*
+=====================================================
+Bugs by Severity
+=====================================================
+*/
+
+        const severityCanvas =
+            document.getElementById("severityChart");
+
+        const severityDataElement =
+            document.getElementById("severity-chart-data");
+
+
+        if (
+            severityCanvas &&
+            severityDataElement
+        ) {
+
+            const severityData = JSON.parse(
+                severityDataElement.textContent
+            );
+
+
+            const severityLabels =
+                severityData.map(function (item) {
+
+                    return item.label;
+
+                });
+
+
+            const severityValues =
+                severityData.map(function (item) {
+
+                    return item.total;
+
+                });
+
+
+            const severityColors = {
+
+                "Critical": "#ef4444",
+
+                "High": "#f97316",
+
+                "Medium": "#3b82f6",
+
+                "Low": "#94a3b8"
+
+            };
+
+
+            const severityBackgrounds =
+                severityLabels.map(function (label) {
+
+                    return (
+                        severityColors[label]
+                        || "#94a3b8"
+                    );
+
+                });
+
+
+            new Chart(severityCanvas, {
+
+                type: "bar",
+
+
+                data: {
+
+                    labels: severityLabels,
+
+
+                    datasets: [
+
+                        {
+
+                            label: "Bugs",
+
+                            data: severityValues,
+
+                            backgroundColor:
+                                severityBackgrounds,
+
+                            borderRadius: 6,
+
+                            borderSkipped: false,
+
+                            barThickness: 28
+
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label: function (context) {
+
+                                    const item =
+                                        severityData[
+                                        context.dataIndex
+                                        ];
+
+
+                                    return (
+                                        " " +
+                                        item.label +
+                                        ": " +
+                                        item.total +
+                                        " (" +
+                                        item.percentage +
+                                        "%)"
+                                    );
+
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+
+                            ticks: {
+
+                                precision: 0,
+
+                                stepSize: 1
+
+                            },
+
+
+                            grid: {
+
+                                color: "#edf1f5"
+
+                            }
+
+                        },
+
+
+                        x: {
+
+                            grid: {
+
+                                display: false
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+    });
 </script>
 
 {% endblock %}
