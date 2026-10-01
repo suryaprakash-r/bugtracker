@@ -184,3 +184,27 @@ def notify_bug_comment(
             bug=bug,
             project=bug.project,
         )
+        
+        
+def notify_project_member_added(
+    *,
+    user,
+    project,
+):
+    """
+    Notify a user when they are added or reactivated
+    as a member of a project.
+    """
+
+    create_notification(
+        recipient=user,
+        title="Added to Project",
+        message=(
+            f"You were added to project "
+            f"{project.name}."
+        ),
+        notification_type=(
+            Notification.NotificationType.PROJECT_ADDED
+        ),
+        project=project,
+    )

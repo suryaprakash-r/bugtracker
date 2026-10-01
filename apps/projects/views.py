@@ -12,6 +12,8 @@ from apps.accounts.permissions import (
     role_required,
 )
 
+from apps.notifications.services import notify_project_member_added
+
 from .forms import ProjectForm, ProjectMemberForm
 from .models import Project, ProjectMember
 
@@ -404,10 +406,15 @@ def project_members(request, project_id):
 
             user = form.cleaned_data["user"]
 
-            ProjectMember.objects.create(
+            membership = ProjectMember.objects.create(
                 project=project,
                 user=user,
                 is_active=True,
+            )
+
+            notify_project_member_added(
+                user=membership.user,
+                project=membership.project,
             )
 
             messages.success(
@@ -465,13 +472,20 @@ def project_member_toggle(request, project_id, member_id):
     )
 
 
+    was_active = membership.is_active
+
     membership.is_active = not membership.is_active
+
     membership.save(
         update_fields=["is_active"]
     )
 
-
     if membership.is_active:
+
+        notify_project_member_added(
+            user=membership.user,
+            project=project,
+        )
 
         messages.success(
             request,
@@ -484,7 +498,6 @@ def project_member_toggle(request, project_id, member_id):
             request,
             f"{membership.user.username} was deactivated from the project.",
         )
-
 
     return redirect(
         "projects:members",
