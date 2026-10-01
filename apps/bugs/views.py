@@ -46,6 +46,13 @@ from .attachment_services import (
     generate_storage_name,
 )
 
+from apps.notifications.models import Notification
+from apps.notifications.services import (
+    create_notification,
+    notify_bug_status_change,
+    notify_bug_comment,
+)
+
 @login_required
 @role_required(Permission.VIEW_BUG)
 def bug_list(request):
@@ -560,14 +567,28 @@ def bug_assign(request, bug_id):
                     )
 
 
-            if previous_assignee_id == developer.id:
+            # if previous_assignee_id == developer.id:
 
-                messages.success(
-                    request,
-                    (
-                        f"Bug {bug.bug_code} is already assigned "
-                        f"to {developer.username}."
+            #     messages.success(
+            #         request,
+            #         (
+            #             f"Bug {bug.bug_code} is already assigned "
+            #             f"to {developer.username}."
+            #         ),
+            #     )
+            
+            if previous_assignee_id != developer.id:
+                create_notification(
+                    recipient=developer,
+                    title="Bug Assigned",
+                    message=(
+                        f"You have been assigned bug "
+                        f"{locked_bug.bug_code} in project "
+                        f"{locked_bug.project.name}."
                     ),
+                    notification_type=Notification.NotificationType.BUG_ASSIGNED,
+                    bug=locked_bug,
+                    project=locked_bug.project,
                 )
 
             else:
@@ -729,6 +750,13 @@ def bug_status_change(request, bug_id):
                     changed_by=request.user,
                     comment=comment,
                 )
+                
+                notify_bug_status_change(
+                    bug=locked_bug,
+                    old_status=old_status,
+                    new_status=requested_status,
+                    changed_by=request.user,
+                )
 
 
             messages.success(
@@ -817,6 +845,11 @@ def bug_comment_create(request, bug_id):
         bug=bug,
         user=request.user,
         message=form.cleaned_data["message"],
+    )
+    
+    notify_bug_comment(
+        bug=bug,
+        commenter=request.user,
     )
 
 
