@@ -1,0 +1,619 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}
+Reports | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Reports
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/reports.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="reports-page">
+
+    <!-- =====================================================
+         Reports Header
+         ===================================================== -->
+
+    <div class="reports-header">
+
+        <h1 class="reports-title">
+            Reports
+        </h1>
+
+        <p class="reports-subtitle">
+            Detailed bug reporting and analytics for your accessible projects.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         Bug Summary
+         ===================================================== -->
+
+    <div class="row g-4 mb-4 report-summary-row">
+
+        <!-- Total Bugs -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="report-stat-card">
+
+                <div class="report-stat-content">
+
+                    <div class="report-stat-info">
+
+                        <p class="report-stat-label">
+                            Total Bugs
+                        </p>
+
+                        <h2 class="report-stat-value">
+                            {{ bug_summary.total_bugs }}
+                        </h2>
+
+                        <p class="report-stat-context">
+                            All visible bugs
+                        </p>
+
+                    </div>
+
+                    <div class="report-stat-icon report-icon-total">
+                        <i class="bi bi-bug-fill"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Open Bugs -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="report-stat-card">
+
+                <div class="report-stat-content">
+
+                    <div class="report-stat-info">
+
+                        <p class="report-stat-label">
+                            Open Bugs
+                        </p>
+
+                        <h2 class="report-stat-value">
+                            {{ bug_summary.open_bugs }}
+                        </h2>
+
+                        <p class="report-stat-context">
+                            Needs attention
+                        </p>
+
+                    </div>
+
+                    <div class="report-stat-icon report-icon-open">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Unassigned Bugs -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="report-stat-card">
+
+                <div class="report-stat-content">
+
+                    <div class="report-stat-info">
+
+                        <p class="report-stat-label">
+                            Unassigned Bugs
+                        </p>
+
+                        <h2 class="report-stat-value">
+                            {{ bug_summary.unassigned_bugs }}
+                        </h2>
+
+                        <p class="report-stat-context">
+                            Awaiting assignment
+                        </p>
+
+                    </div>
+
+                    <div class="report-stat-icon report-icon-unassigned">
+                        <i class="bi bi-person-x-fill"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Critical Bugs -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="report-stat-card">
+
+                <div class="report-stat-content">
+
+                    <div class="report-stat-info">
+
+                        <p class="report-stat-label">
+                            Critical Bugs
+                        </p>
+
+                        <h2 class="report-stat-value">
+                            {{ bug_summary.critical_bugs }}
+                        </h2>
+
+                        <p class="report-stat-context">
+                            Critical severity
+                        </p>
+
+                    </div>
+
+                    <div class="report-stat-icon report-icon-critical">
+                        <i class="bi bi-shield-exclamation"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Resolved Bugs -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="report-stat-card">
+
+                <div class="report-stat-content">
+
+                    <div class="report-stat-info">
+
+                        <p class="report-stat-label">
+                            Resolved Bugs
+                        </p>
+
+                        <h2 class="report-stat-value">
+                            {{ bug_summary.resolved_bugs }}
+                        </h2>
+
+                        <p class="report-stat-context">
+                            Resolved status
+                        </p>
+
+                    </div>
+
+                    <div class="report-stat-icon report-icon-resolved">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Testing Bugs -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="report-stat-card">
+
+                <div class="report-stat-content">
+
+                    <div class="report-stat-info">
+
+                        <p class="report-stat-label">
+                            Testing Bugs
+                        </p>
+
+                        <h2 class="report-stat-value">
+                            {{ bug_summary.testing_bugs }}
+                        </h2>
+
+                        <p class="report-stat-context">
+                            Currently in testing
+                        </p>
+
+                    </div>
+
+                    <div class="report-stat-icon report-icon-testing">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Reopened Bugs -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="report-stat-card">
+
+                <div class="report-stat-content">
+
+                    <div class="report-stat-info">
+
+                        <p class="report-stat-label">
+                            Reopened Bugs
+                        </p>
+
+                        <h2 class="report-stat-value">
+                            {{ bug_summary.reopened_bugs }}
+                        </h2>
+
+                        <p class="report-stat-context">
+                            Returned for rework
+                        </p>
+
+                    </div>
+
+                    <div class="report-stat-icon report-icon-reopened">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Closed Bugs -->
+
+        <div class="col-12 col-sm-6 col-xl-3">
+
+            <div class="report-stat-card">
+
+                <div class="report-stat-content">
+
+                    <div class="report-stat-info">
+
+                        <p class="report-stat-label">
+                            Closed Bugs
+                        </p>
+
+                        <h2 class="report-stat-value">
+                            {{ bug_summary.closed_bugs }}
+                        </h2>
+
+                        <p class="report-stat-context">
+                            Fully closed
+                        </p>
+
+                    </div>
+
+                    <div class="report-stat-icon report-icon-closed">
+                        <i class="bi bi-check2-all"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
+     Status Breakdown
+     ===================================================== -->
+
+    <div class="dashboard-card report-breakdown-card mb-4">
+
+        <div class="dashboard-card-header">
+
+            <div>
+                <h3 class="dashboard-card-title">
+                    Bugs by Status
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Current status distribution of visible bugs
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card-body">
+
+            <div class="report-breakdown-list">
+
+                {% for item in bug_summary.status_counts %}
+
+                <div class="report-breakdown-item">
+
+                    <div class="report-breakdown-header">
+
+                        <div class="report-breakdown-label">
+
+                            {% if item.value == "NEW" %}
+                            <span class="report-breakdown-dot report-dot-new"></span>
+                            {% elif item.value == "ASSIGNED" %}
+                            <span class="report-breakdown-dot report-dot-assigned"></span>
+                            {% elif item.value == "IN_PROGRESS" %}
+                            <span class="report-breakdown-dot report-dot-in-progress"></span>
+                            {% elif item.value == "RESOLVED" %}
+                            <span class="report-breakdown-dot report-dot-resolved"></span>
+                            {% elif item.value == "TESTING" %}
+                            <span class="report-breakdown-dot report-dot-testing"></span>
+                            {% elif item.value == "CLOSED" %}
+                            <span class="report-breakdown-dot report-dot-closed"></span>
+                            {% elif item.value == "REOPENED" %}
+                            <span class="report-breakdown-dot report-dot-reopened"></span>
+                            {% endif %}
+
+                            <span>
+                                {{ item.label }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="report-breakdown-values">
+
+                            <strong>
+                                {{ item.total }}
+                            </strong>
+
+                            <span>
+                                {{ item.percentage }}%
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-progress">
+
+                        <div class="report-progress-bar" data-percentage="{{ item.percentage }}"></div>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+     Priority & Severity Breakdown
+     ===================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <!-- Priority -->
+
+        <div class="col-12 col-xl-6">
+
+            <div class="dashboard-card report-breakdown-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+
+                        <h3 class="dashboard-card-title">
+                            Bugs by Priority
+                        </h3>
+
+                        <p class="dashboard-card-subtitle">
+                            Priority distribution of visible bugs
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card-body">
+
+                    <div class="report-breakdown-list">
+
+                        {% for item in bug_summary.priority_counts %}
+
+                        <div class="report-breakdown-item">
+
+                            <div class="report-breakdown-header">
+
+                                <div class="report-breakdown-label">
+
+                                    {% if item.value == "URGENT" %}
+                                    <span class="report-breakdown-dot report-dot-urgent"></span>
+                                    {% elif item.value == "HIGH" %}
+                                    <span class="report-breakdown-dot report-dot-high"></span>
+                                    {% elif item.value == "MEDIUM" %}
+                                    <span class="report-breakdown-dot report-dot-medium"></span>
+                                    {% elif item.value == "LOW" %}
+                                    <span class="report-breakdown-dot report-dot-low"></span>
+                                    {% endif %}
+
+                                    <span>
+                                        {{ item.label }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="report-breakdown-values">
+
+                                    <strong>
+                                        {{ item.total }}
+                                    </strong>
+
+                                    <span>
+                                        {{ item.percentage }}%
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="report-progress">
+
+                                <div class="report-progress-bar" data-percentage="{{ item.percentage }}"></div>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Severity -->
+
+        <div class="col-12 col-xl-6">
+
+            <div class="dashboard-card report-breakdown-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+
+                        <h3 class="dashboard-card-title">
+                            Bugs by Severity
+                        </h3>
+
+                        <p class="dashboard-card-subtitle">
+                            Severity distribution of visible bugs
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card-body">
+
+                    <div class="report-breakdown-list">
+
+                        {% for item in bug_summary.severity_counts %}
+
+                        <div class="report-breakdown-item">
+
+                            <div class="report-breakdown-header">
+
+                                <div class="report-breakdown-label">
+
+                                    {% if item.value == "CRITICAL" %}
+                                    <span class="report-breakdown-dot report-dot-critical"></span>
+                                    {% elif item.value == "HIGH" %}
+                                    <span class="report-breakdown-dot report-dot-high"></span>
+                                    {% elif item.value == "MEDIUM" %}
+                                    <span class="report-breakdown-dot report-dot-medium"></span>
+                                    {% elif item.value == "LOW" %}
+                                    <span class="report-breakdown-dot report-dot-low"></span>
+                                    {% endif %}
+
+                                    <span>
+                                        {{ item.label }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="report-breakdown-values">
+
+                                    <strong>
+                                        {{ item.total }}
+                                    </strong>
+
+                                    <span>
+                                        {{ item.percentage }}%
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="report-progress">
+
+                                <div class="report-progress-bar" data-percentage="{{ item.percentage }}"></div>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const progressBars = document.querySelectorAll(
+        ".report-progress-bar"
+    );
+
+    progressBars.forEach(function (bar) {
+
+        const percentage = parseFloat(
+            bar.dataset.percentage
+        );
+
+        if (!Number.isNaN(percentage)) {
+            bar.style.width = percentage + "%";
+        }
+
+    });
+
+});
+</script>
+
+{% endblock %}

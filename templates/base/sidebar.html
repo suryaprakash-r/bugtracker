@@ -74,7 +74,10 @@
         <!-- Reports -->
         {% if request.user|has_permission:"view_reports" %}
 
-        <a href="#" class="sidebar-link">
+        <a href="{% url 'reports:index' %}" class="sidebar-link
+        {% if request.resolver_match.app_name == 'reports' %}
+            active
+        {% endif %}">
             <i class="bi bi-bar-chart-fill"></i>
             <span>Reports</span>
         </a>

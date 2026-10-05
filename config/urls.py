@@ -45,6 +45,10 @@ urlpatterns = [
         "notifications/",
         include("apps.notifications.urls"),
     ),
+    path(
+        "reports/",
+        include("apps.reports.urls"),
+    ),
 ]
 
 urlpatterns += static(
