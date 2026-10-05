@@ -317,6 +317,12 @@ def get_dashboard_data(user):
     projects = get_visible_projects(user)
     bugs = get_visible_bugs(user)
     bug_trend = get_bug_trend(bugs)
+    
+    role_metrics = get_role_metrics(
+        user,
+        projects,
+        bugs,
+    )
 
     # ---------------------------------------------------------
     # Project KPIs
@@ -429,4 +435,190 @@ def get_dashboard_data(user):
         "recent_activity": recent_activity,
         
         "bug_trend": bug_trend,
+        "role_metrics": role_metrics,
+    }
+    
+def get_role_metrics(user, visible_projects, visible_bugs):
+    """
+    Return dashboard KPI metrics tailored to the user's role.
+    """
+
+    open_statuses = {
+        "NEW",
+        "ASSIGNED",
+        "IN_PROGRESS",
+        "REOPENED",
+    }
+
+    resolved_statuses = {
+        "RESOLVED",
+        "TESTING",
+        "CLOSED",
+    }
+
+    role = getattr(user, "role", None)
+
+    total_projects = visible_projects.count()
+    active_projects = visible_projects.filter(
+        status="ACTIVE"
+    ).count()
+
+    total_bugs = visible_bugs.count()
+
+    open_bugs = visible_bugs.filter(
+        status__in=open_statuses
+    ).count()
+
+    unassigned_bugs = visible_bugs.filter(
+        assigned_to__isnull=True
+    ).count()
+
+    critical_bugs = visible_bugs.filter(
+        severity="CRITICAL"
+    ).count()
+
+    resolved_bugs = visible_bugs.filter(
+        status__in=resolved_statuses
+    ).count()
+
+    closed_bugs = visible_bugs.filter(
+        status="CLOSED"
+    ).count()
+
+
+    # -----------------------------------------------------
+    # Common metrics
+    # -----------------------------------------------------
+
+    common = {
+        "total_projects": total_projects,
+        "active_projects": active_projects,
+        "total_bugs": total_bugs,
+        "open_bugs": open_bugs,
+        "unassigned_bugs": unassigned_bugs,
+        "critical_bugs": critical_bugs,
+        "resolved_bugs": resolved_bugs,
+        "closed_bugs": closed_bugs,
+    }
+
+
+    # -----------------------------------------------------
+    # Admin / Project Manager
+    # -----------------------------------------------------
+
+    if (
+        user.is_superuser
+        or role in {"ADMIN", "PROJECT_MANAGER"}
+    ):
+        return {
+            "role": role or "ADMIN",
+            "role_label": (
+                "Administrator"
+                if role == "ADMIN" or user.is_superuser
+                else "Project Manager"
+            ),
+            "metrics": common,
+        }
+
+
+    # -----------------------------------------------------
+    # Developer
+    # -----------------------------------------------------
+
+    if role == "DEVELOPER":
+
+        assigned_bugs = visible_bugs.filter(
+            assigned_to=user
+        )
+
+        assigned_open_bugs = assigned_bugs.filter(
+            status__in=open_statuses
+        ).count()
+
+        assigned_resolved_bugs = assigned_bugs.filter(
+            status__in=resolved_statuses
+        ).count()
+
+        assigned_in_progress = assigned_bugs.filter(
+            status="IN_PROGRESS"
+        ).count()
+
+        assigned_testing = assigned_bugs.filter(
+            status="TESTING"
+        ).count()
+
+        assigned_reopened = assigned_bugs.filter(
+            status="REOPENED"
+        ).count()
+
+        assigned_closed = assigned_bugs.filter(
+            status="CLOSED"
+        ).count()
+
+        return {
+            "role": role,
+            "role_label": "Developer",
+            "metrics": {
+                "total_projects": total_projects,
+                "active_projects": active_projects,
+                "total_bugs": assigned_bugs.count(),
+                "open_bugs": assigned_open_bugs,
+                "unassigned_bugs": unassigned_bugs,
+                "critical_bugs": assigned_bugs.filter(
+                    severity="CRITICAL"
+                ).count(),
+                "resolved_bugs": assigned_resolved_bugs,
+                "closed_bugs": assigned_closed,
+                "in_progress_bugs": assigned_in_progress,
+                "testing_bugs": assigned_testing,
+                "reopened_bugs": assigned_reopened,
+            },
+        }
+
+
+    # -----------------------------------------------------
+    # Tester
+    # -----------------------------------------------------
+
+    if role == "TESTER":
+
+        testing_bugs = visible_bugs.filter(
+            status="TESTING"
+        ).count()
+
+        reopened_bugs = visible_bugs.filter(
+            status="REOPENED"
+        ).count()
+
+        new_bugs = visible_bugs.filter(
+            status="NEW"
+        ).count()
+
+        return {
+            "role": role,
+            "role_label": "Tester",
+            "metrics": {
+                "total_projects": total_projects,
+                "active_projects": active_projects,
+                "total_bugs": total_bugs,
+                "open_bugs": open_bugs,
+                "unassigned_bugs": unassigned_bugs,
+                "critical_bugs": critical_bugs,
+                "resolved_bugs": resolved_bugs,
+                "closed_bugs": closed_bugs,
+                "testing_bugs": testing_bugs,
+                "reopened_bugs": reopened_bugs,
+                "new_bugs": new_bugs,
+            },
+        }
+
+
+    # -----------------------------------------------------
+    # Fallback
+    # -----------------------------------------------------
+
+    return {
+        "role": role or "UNKNOWN",
+        "role_label": "User",
+        "metrics": common,
     }

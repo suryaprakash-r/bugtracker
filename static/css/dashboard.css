@@ -924,6 +924,567 @@
 
 
 /* =========================================================
+   Dashboard Visual Polish
+   ========================================================= */
+
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.dashboard-title {
+    letter-spacing: -0.3px;
+}
+
+.dashboard-subtitle {
+    line-height: 1.6;
+}
+
+.dashboard-stat-row {
+    margin-bottom: 28px !important;
+}
+
+.stat-card {
+    min-height: 132px;
+    display: flex;
+    align-items: center;
+}
+
+.stat-card-content {
+    align-items: center;
+}
+
+.stat-label {
+    line-height: 1.4;
+}
+
+.stat-value {
+    letter-spacing: -0.5px;
+}
+
+.stat-context {
+    min-height: 15px;
+}
+
+.stat-icon {
+    flex-shrink: 0;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.04);
+}
+
+.dashboard-card {
+    overflow: hidden;
+}
+
+.dashboard-card-header {
+    min-height: 72px;
+}
+
+.dashboard-card-title {
+    line-height: 1.4;
+}
+
+.dashboard-card-subtitle {
+    line-height: 1.5;
+}
+
+.dashboard-card-body {
+    min-width: 0;
+}
+
+
+/* =========================================================
+   10.9.3 — Chart & Analytics Polish
+   ========================================================= */
+
+.dashboard-chart-row,
+.dashboard-page > .row {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 1.5rem;
+}
+
+.dashboard-card {
+    overflow: hidden;
+}
+
+.dashboard-card-header {
+    padding: 19px 22px;
+}
+
+.dashboard-card-body {
+    padding: 20px 22px;
+}
+
+/* ---------------------------------------------------------
+   Chart Containers
+   --------------------------------------------------------- */
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+.chart-container canvas {
+    display: block;
+}
+
+.status-chart-container {
+    height: 260px;
+}
+
+.priority-chart-container {
+    height: 280px;
+}
+
+.severity-chart-container {
+    height: 270px;
+}
+
+.bug-trend-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------
+   Status / Severity Summary
+   --------------------------------------------------------- */
+
+.status-summary-list,
+.severity-summary-list {
+    gap: 9px;
+}
+
+.status-summary-item,
+.severity-summary-item {
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.status-summary-item:hover,
+.severity-summary-item:hover {
+    background: #f7f9fc;
+    border-color: #e2e7ee;
+    transform: translateX(2px);
+}
+
+/* ---------------------------------------------------------
+   Workload Tables
+   --------------------------------------------------------- */
+
+.workload-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.workload-table {
+    width: 100%;
+    margin: 0;
+}
+
+.workload-table thead th {
+    padding: 10px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #7c8696;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+}
+
+.workload-table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f2f5;
+}
+
+.workload-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.workload-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.workload-table tbody tr:hover {
+    background: #fafbfc;
+}
+
+/* ---------------------------------------------------------
+   Testing Queue
+   --------------------------------------------------------- */
+
+.testing-queue-item {
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.testing-queue-item:hover {
+    background: #fafbfc;
+    transform: translateX(2px);
+}
+
+/* ---------------------------------------------------------
+   Recent Activity
+   --------------------------------------------------------- */
+
+.recent-activity-item {
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.recent-activity-item:hover {
+    background: #fafbfc;
+    transform: translateX(2px);
+}
+
+/* ---------------------------------------------------------
+   Recent Bugs
+   --------------------------------------------------------- */
+
+.recent-bugs-card {
+    margin-top: 0;
+}
+
+.recent-bugs-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.recent-bugs-table {
+    margin-bottom: 0;
+}
+
+.recent-bugs-table thead th {
+    white-space: nowrap;
+}
+
+.recent-bugs-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.recent-bugs-table tbody tr:hover {
+    background: #fafbfc;
+}
+
+
+/* =========================================================
+   10.9.4 — Final Responsive & Empty-State Polish
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Empty States
+   --------------------------------------------------------- */
+
+.dashboard-empty {
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+}
+
+.dashboard-empty i {
+    margin-bottom: 10px;
+    font-size: 30px;
+    opacity: 0.7;
+}
+
+.dashboard-empty p {
+    max-width: 420px;
+    margin: 0;
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* ---------------------------------------------------------
+   Recent Activity
+   --------------------------------------------------------- */
+
+.recent-activity-list {
+    width: 100%;
+}
+
+.recent-activity-item {
+    min-width: 0;
+}
+
+/* ---------------------------------------------------------
+   Recent Bugs
+   --------------------------------------------------------- */
+
+.recent-bugs-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.recent-bugs-table {
+    min-width: 720px;
+}
+
+.recent-bugs-table th,
+.recent-bugs-table td {
+    white-space: nowrap;
+}
+
+/* Allow bug title to remain flexible */
+.recent-bugs-table td:nth-child(2) {
+    white-space: normal;
+}
+
+/* ---------------------------------------------------------
+   Dashboard Card Spacing
+   --------------------------------------------------------- */
+
+.dashboard-page > .dashboard-card {
+    margin-bottom: 28px;
+}
+
+.dashboard-page > .dashboard-card:last-child {
+    margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------
+   Tablet
+   --------------------------------------------------------- */
+
+@media (max-width: 991px) {
+
+    .dashboard-page > .row {
+        margin-bottom: 24px !important;
+    }
+
+    .dashboard-card-header {
+        gap: 12px;
+    }
+
+    .status-analytics-wrapper,
+    .severity-analytics-wrapper {
+        gap: 20px;
+    }
+
+    .recent-bugs-table {
+        min-width: 700px;
+    }
+}
+
+/* ---------------------------------------------------------
+   Mobile
+   --------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+    .dashboard-page > .dashboard-card {
+        margin-bottom: 24px;
+    }
+
+    .dashboard-card-header {
+        align-items: flex-start;
+    }
+
+    .dashboard-card-title {
+        font-size: 13px;
+    }
+
+    .dashboard-card-subtitle {
+        font-size: 11px;
+    }
+
+    .dashboard-empty {
+        min-height: 160px;
+        padding: 28px 16px;
+    }
+
+    .recent-bugs-table {
+        min-width: 680px;
+    }
+}
+
+/* ---------------------------------------------------------
+   Small Mobile
+   --------------------------------------------------------- */
+
+@media (max-width: 576px) {
+
+    .dashboard-page > .row {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+
+    .dashboard-page > .dashboard-card {
+        margin-bottom: 20px;
+    }
+
+    .dashboard-card-header {
+        padding: 15px 16px;
+    }
+
+    .dashboard-card-body {
+        padding: 16px;
+    }
+
+    .dashboard-empty {
+        min-height: 145px;
+        padding: 24px 14px;
+    }
+
+    .dashboard-empty i {
+        font-size: 26px;
+    }
+
+    .dashboard-empty p {
+        font-size: 12px;
+    }
+
+    .recent-bugs-table {
+        min-width: 650px;
+    }
+}
+
+/* ---------------------------------------------------------
+   Very Small Screens
+   --------------------------------------------------------- */
+
+@media (max-width: 400px) {
+
+    .dashboard-title {
+        font-size: 20px;
+    }
+
+    .dashboard-subtitle {
+        font-size: 11px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-value {
+        font-size: 23px;
+    }
+
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        font-size: 17px;
+    }
+
+    .recent-bugs-table {
+        min-width: 620px;
+    }
+}
+/* ---------------------------------------------------------
+   Responsive Analytics
+   --------------------------------------------------------- */
+
+@media (max-width: 991px) {
+
+    .status-chart-container {
+        height: 250px;
+    }
+
+    .severity-chart-container {
+        height: 250px;
+    }
+
+    .bug-trend-container {
+        height: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .dashboard-card-header {
+        padding: 17px 18px;
+    }
+
+    .dashboard-card-body {
+        padding: 18px;
+    }
+
+    .chart-container {
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    .bug-trend-container {
+        height: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .dashboard-card-header {
+        padding: 16px;
+    }
+
+    .dashboard-card-body {
+        padding: 16px;
+    }
+
+    .status-chart-container,
+    .priority-chart-container,
+    .severity-chart-container {
+        height: 230px;
+    }
+
+    .bug-trend-container {
+        height: 230px;
+    }
+
+    .workload-table {
+        min-width: 620px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .dashboard-header {
+        margin-bottom: 24px;
+    }
+
+    .dashboard-title {
+        font-size: 22px;
+    }
+
+    .dashboard-subtitle {
+        font-size: 12px;
+    }
+
+    .stat-card {
+        min-height: 124px;
+        padding: 20px;
+    }
+
+    .stat-value {
+        font-size: 26px;
+    }
+
+    .dashboard-card-header {
+        min-height: 68px;
+        padding: 16px 18px;
+    }
+
+    .dashboard-card-body {
+        padding: 18px;
+    }
+}
+
+/* =========================================================
    Bug Trend - Mobile
    ========================================================= */
 

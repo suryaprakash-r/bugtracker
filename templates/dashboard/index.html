@@ -30,11 +30,35 @@ Dashboard
             </h1>
 
             <p class="dashboard-subtitle">
+
                 Welcome back,
+
                 <strong>
                     {{ request.user.first_name|default:request.user.username }}
                 </strong>!
+
+                {% if dashboard.role_metrics.role == "ADMIN" %}
+
+                Here's your administrator overview of the BugTracker platform.
+
+                {% elif dashboard.role_metrics.role == "PROJECT_MANAGER" %}
+
+                Here's your project management overview.
+
+                {% elif dashboard.role_metrics.role == "DEVELOPER" %}
+
+                Here's your development workload and assigned bugs.
+
+                {% elif dashboard.role_metrics.role == "TESTER" %}
+
+                Here's your testing and retesting workspace.
+
+                {% else %}
+
                 Here's what's happening with your projects.
+
+                {% endif %}
+
             </p>
         </div>
 
@@ -45,149 +69,436 @@ Dashboard
          Statistics
          ===================================================== -->
 
+    <!-- =====================================================
+     Role-Aware Statistics
+     ===================================================== -->
+
     <div class="row g-4 mb-4 dashboard-stat-row">
 
-        <!-- Total Projects -->
+        <!-- =================================================
+         Card 1 - Projects
+         ================================================= -->
+
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="stat-card">
+
                 <div class="stat-card-content">
+
                     <div class="stat-card-info">
-                        <p class="stat-label">Total Projects</p>
-                        <h2 class="stat-value">{{ dashboard.total_projects }}</h2>
-                        <p class="stat-context">All visible projects</p>
+
+                        <p class="stat-label">
+
+                            {% if dashboard.role_metrics.role == "ADMIN" %}
+                            Total Projects
+
+                            {% elif dashboard.role_metrics.role == "PROJECT_MANAGER" %}
+                            Managed Projects
+
+                            {% elif dashboard.role_metrics.role == "DEVELOPER" %}
+                            Accessible Projects
+
+                            {% elif dashboard.role_metrics.role == "TESTER" %}
+                            Test Projects
+
+                            {% else %}
+                            Projects
+                            {% endif %}
+
+                        </p>
+
+                        <h2 class="stat-value">
+                            {{ dashboard.role_metrics.metrics.total_projects }}
+                        </h2>
+
+                        <p class="stat-context">
+                            {{ dashboard.role_metrics.role_label }} view
+                        </p>
+
                     </div>
 
                     <div class="stat-icon projects">
                         <i class="bi bi-folder-fill"></i>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Active Projects -->
+        <!-- =================================================
+         Card 2 - Active Projects
+         ================================================= -->
+
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="stat-card">
+
                 <div class="stat-card-content">
+
                     <div class="stat-card-info">
-                        <p class="stat-label">Active Projects</p>
-                        <h2 class="stat-value">{{ dashboard.active_projects }}</h2>
-                        <p class="stat-context">Currently active</p>
+
+                        <p class="stat-label">
+                            Active Projects
+                        </p>
+
+                        <h2 class="stat-value">
+                            {{ dashboard.role_metrics.metrics.active_projects }}
+                        </h2>
+
+                        <p class="stat-context">
+                            Currently active
+                        </p>
+
                     </div>
 
                     <div class="stat-icon active-projects">
                         <i class="bi bi-folder-check"></i>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Total Bugs -->
+        <!-- =================================================
+         Card 3 - Total / Assigned Bugs
+         ================================================= -->
+
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="stat-card">
+
                 <div class="stat-card-content">
+
                     <div class="stat-card-info">
-                        <p class="stat-label">Total Bugs</p>
-                        <h2 class="stat-value">{{ dashboard.total_bugs }}</h2>
-                        <p class="stat-context">All visible bugs</p>
+
+                        <p class="stat-label">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            My Assigned Bugs
+
+                            {% elif dashboard.role_metrics.role == "TESTER" %}
+                            Visible Bugs
+
+                            {% else %}
+                            Total Bugs
+                            {% endif %}
+
+                        </p>
+
+                        <h2 class="stat-value">
+                            {{ dashboard.role_metrics.metrics.total_bugs }}
+                        </h2>
+
+                        <p class="stat-context">
+                            Current workload
+                        </p>
+
                     </div>
 
                     <div class="stat-icon bugs">
                         <i class="bi bi-bug-fill"></i>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Open Bugs -->
+        <!-- =================================================
+         Card 4 - Open Bugs
+         ================================================= -->
+
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="stat-card">
+
                 <div class="stat-card-content">
+
                     <div class="stat-card-info">
-                        <p class="stat-label">Open Bugs</p>
-                        <h2 class="stat-value">{{ dashboard.open_bugs }}</h2>
-                        <p class="stat-context">Needs attention</p>
+
+                        <p class="stat-label">
+                            Open Bugs
+                        </p>
+
+                        <h2 class="stat-value">
+                            {{ dashboard.role_metrics.metrics.open_bugs }}
+                        </h2>
+
+                        <p class="stat-context">
+                            Needs attention
+                        </p>
+
                     </div>
 
                     <div class="stat-icon open">
                         <i class="bi bi-exclamation-circle-fill"></i>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Unassigned Bugs -->
+        <!-- =================================================
+         Card 5 - Role-Specific
+         ================================================= -->
+
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="stat-card">
+
                 <div class="stat-card-content">
+
                     <div class="stat-card-info">
-                        <p class="stat-label">Unassigned Bugs</p>
-                        <h2 class="stat-value">{{ dashboard.unassigned_bugs }}</h2>
-                        <p class="stat-context">Awaiting assignment</p>
+
+                        <p class="stat-label">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            In Progress
+
+                            {% elif dashboard.role_metrics.role == "TESTER" %}
+                            Testing Queue
+
+                            {% else %}
+                            Unassigned Bugs
+                            {% endif %}
+
+                        </p>
+
+                        <h2 class="stat-value">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            {{ dashboard.role_metrics.metrics.in_progress_bugs }}
+
+                            {% elif dashboard.role_metrics.role == "TESTER" %}
+                            {{ dashboard.role_metrics.metrics.testing_bugs }}
+
+                            {% else %}
+                            {{ dashboard.role_metrics.metrics.unassigned_bugs }}
+                            {% endif %}
+
+                        </h2>
+
+                        <p class="stat-context">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            Currently in progress
+
+                            {% elif dashboard.role_metrics.role == "TESTER" %}
+                            Awaiting testing
+
+                            {% else %}
+                            Awaiting assignment
+                            {% endif %}
+
+                        </p>
+
                     </div>
 
                     <div class="stat-icon unassigned">
+
+                        {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                        <i class="bi bi-arrow-repeat"></i>
+
+                        {% elif dashboard.role_metrics.role == "TESTER" %}
+                        <i class="bi bi-clipboard-check"></i>
+
+                        {% else %}
                         <i class="bi bi-person-x-fill"></i>
+                        {% endif %}
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Critical Bugs -->
+        <!-- =================================================
+         Card 6 - Role-Specific
+         ================================================= -->
+
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="stat-card">
+
                 <div class="stat-card-content">
+
                     <div class="stat-card-info">
-                        <p class="stat-label">Critical Bugs</p>
-                        <h2 class="stat-value">{{ dashboard.critical_bugs }}</h2>
-                        <p class="stat-context">Critical severity</p>
+
+                        <p class="stat-label">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            Testing
+
+                            {% elif dashboard.role_metrics.role == "TESTER" %}
+                            Reopened Bugs
+
+                            {% else %}
+                            Critical Bugs
+                            {% endif %}
+
+                        </p>
+
+                        <h2 class="stat-value">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            {{ dashboard.role_metrics.metrics.testing_bugs }}
+
+                            {% elif dashboard.role_metrics.role == "TESTER" %}
+                            {{ dashboard.role_metrics.metrics.reopened_bugs }}
+
+                            {% else %}
+                            {{ dashboard.role_metrics.metrics.critical_bugs }}
+                            {% endif %}
+
+                        </h2>
+
+                        <p class="stat-context">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            Ready for testing
+
+                            {% elif dashboard.role_metrics.role == "TESTER" %}
+                            Requires retesting
+
+                            {% else %}
+                            Critical severity
+                            {% endif %}
+
+                        </p>
+
                     </div>
 
                     <div class="stat-icon critical">
+
+                        {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                        <i class="bi bi-clipboard-check"></i>
+
+                        {% elif dashboard.role_metrics.role == "TESTER" %}
+                        <i class="bi bi-arrow-counterclockwise"></i>
+
+                        {% else %}
                         <i class="bi bi-shield-exclamation"></i>
+                        {% endif %}
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Resolved Bugs -->
+        <!-- =================================================
+         Card 7 - Resolved / Completed
+         ================================================= -->
+
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="stat-card">
+
                 <div class="stat-card-content">
+
                     <div class="stat-card-info">
-                        <p class="stat-label">Resolved Bugs</p>
-                        <h2 class="stat-value">{{ dashboard.resolved_bugs }}</h2>
-                        <p class="stat-context">Resolved / testing / closed</p>
+
+                        <p class="stat-label">
+                            Resolved Bugs
+                        </p>
+
+                        <h2 class="stat-value">
+                            {{ dashboard.role_metrics.metrics.resolved_bugs }}
+                        </h2>
+
+                        <p class="stat-context">
+                            Resolved / testing / closed
+                        </p>
+
                     </div>
 
                     <div class="stat-icon resolved">
                         <i class="bi bi-check-circle-fill"></i>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
 
-        <!-- Closed Bugs -->
+        <!-- =================================================
+         Card 8 - Closed / Role-Specific
+         ================================================= -->
+
         <div class="col-12 col-sm-6 col-xl-3">
+
             <div class="stat-card">
+
                 <div class="stat-card-content">
+
                     <div class="stat-card-info">
-                        <p class="stat-label">Closed Bugs</p>
-                        <h2 class="stat-value">{{ dashboard.closed_bugs }}</h2>
-                        <p class="stat-context">Fully closed</p>
+
+                        <p class="stat-label">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            Reopened Bugs
+
+                            {% else %}
+                            Closed Bugs
+                            {% endif %}
+
+                        </p>
+
+                        <h2 class="stat-value">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            {{ dashboard.role_metrics.metrics.reopened_bugs }}
+                            {% else %}
+                            {{ dashboard.role_metrics.metrics.closed_bugs }}
+                            {% endif %}
+
+                        </h2>
+
+                        <p class="stat-context">
+
+                            {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                            Returned for rework
+                            {% else %}
+                            Fully closed
+                            {% endif %}
+
+                        </p>
+
                     </div>
 
                     <div class="stat-icon closed">
+
+                        {% if dashboard.role_metrics.role == "DEVELOPER" %}
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        {% else %}
                         <i class="bi bi-check2-all"></i>
+                        {% endif %}
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
     </div>
@@ -414,14 +725,366 @@ Dashboard
     </div>
 
     <!-- =====================================================
-     Workload Analytics
+     Role-Aware Workload Analytics
      ===================================================== -->
+
+    {% if dashboard.role_metrics.role == "DEVELOPER" %}
+
+    <!-- =================================================
+         Developer: Personal Workload
+         ================================================= -->
 
     <div class="row g-4 mb-4">
 
+        <!-- My Workload -->
+        <div class="col-12 col-xl-7">
+
+            <div class="dashboard-card workload-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+
+                        <h3 class="dashboard-card-title">
+                            My Workload
+                        </h3>
+
+                        <p class="dashboard-card-subtitle">
+                            Your assigned bug workload
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card-body">
+
+                    <div class="workload-table-wrapper">
+
+                        <table class="workload-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Developer</th>
+                                    <th>Total</th>
+                                    <th>Open</th>
+                                    <th>Resolved</th>
+                                    <th>Critical</th>
+                                </tr>
+                            </thead>
+
+
+                            <tbody>
+
+                                <tr>
+
+                                    <td>
+
+                                        <div class="workload-user">
+
+                                            <div class="workload-avatar">
+                                                {{ request.user.username|first|upper }}
+                                            </div>
+
+                                            <div class="workload-user-info">
+
+                                                <strong>
+                                                    {{ request.user.get_full_name|default:request.user.username }}
+                                                </strong>
+
+                                                <span>
+                                                    @{{ request.user.username }}
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        <span class="workload-total">
+                                            {{ dashboard.role_metrics.metrics.total_bugs }}
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="workload-number workload-open">
+                                            {{ dashboard.role_metrics.metrics.open_bugs }}
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+                                        <span class="workload-number workload-resolved">
+                                            {{ dashboard.role_metrics.metrics.resolved_bugs }}
+                                        </span>
+                                    </td>
+
+
+                                    <td>
+
+                                        {% if dashboard.role_metrics.metrics.critical_bugs > 0 %}
+
+                                        <span class="workload-number workload-critical">
+                                            {{ dashboard.role_metrics.metrics.critical_bugs }}
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="workload-zero">
+                                            0
+                                        </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- My Workflow -->
+
+        <div class="col-12 col-xl-5">
+
+            <div class="dashboard-card workload-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+
+                        <h3 class="dashboard-card-title">
+                            My Workflow
+                        </h3>
+
+                        <p class="dashboard-card-subtitle">
+                            Current bug workflow
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card-body">
+
+                    <div class="testing-queue-list">
+
+                        <!-- In Progress -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon testing">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    In Progress
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.role_metrics.metrics.in_progress_bugs }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Testing -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon ready">
+                                <i class="bi bi-clipboard-check"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    Testing
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.role_metrics.metrics.testing_bugs }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Reopened -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon reopened">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    Reopened
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.role_metrics.metrics.reopened_bugs }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% elif dashboard.role_metrics.role == "TESTER" %}
+
+    <!-- =================================================
+         Tester: Testing Queue
+         ================================================= -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-12">
+
+            <div class="dashboard-card workload-card">
+
+                <div class="dashboard-card-header">
+
+                    <div>
+
+                        <h3 class="dashboard-card-title">
+                            Testing Queue
+                        </h3>
+
+                        <p class="dashboard-card-subtitle">
+                            Bugs requiring testing and retesting
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="dashboard-card-body">
+
+                    <div class="testing-queue-list">
+
+                        <!-- Ready for Testing -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon ready">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    Ready for Testing
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.role_metrics.metrics.testing_bugs }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Reopened -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon reopened">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    Reopened
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.role_metrics.metrics.reopened_bugs }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Resolved -->
+
+                        <div class="testing-queue-item">
+
+                            <div class="testing-queue-icon testing">
+                                <i class="bi bi-check-circle"></i>
+                            </div>
+
+                            <div class="testing-queue-content">
+
+                                <span>
+                                    Resolved
+                                </span>
+
+                                <strong>
+                                    {{ dashboard.role_metrics.metrics.resolved_bugs }}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% else %}
+
+    <!-- =================================================
+         Admin / Project Manager: Team Workload
+         ================================================= -->
+
+    <div class="row g-4 mb-4">
 
         <!-- Developer Workload -->
-
         <div class="col-12 col-xl-7">
 
             <div class="dashboard-card workload-card">
@@ -455,25 +1118,11 @@ Dashboard
 
                                 <tr>
 
-                                    <th>
-                                        Developer
-                                    </th>
-
-                                    <th>
-                                        Total
-                                    </th>
-
-                                    <th>
-                                        Open
-                                    </th>
-
-                                    <th>
-                                        Resolved
-                                    </th>
-
-                                    <th>
-                                        Critical
-                                    </th>
+                                    <th>Developer</th>
+                                    <th>Total</th>
+                                    <th>Open</th>
+                                    <th>Resolved</th>
+                                    <th>Critical</th>
 
                                 </tr>
 
@@ -608,7 +1257,6 @@ Dashboard
 
                     <div class="testing-queue-list">
 
-
                         <!-- Ready for Testing -->
 
                         <div class="testing-queue-item">
@@ -686,6 +1334,8 @@ Dashboard
         </div>
 
     </div>
+
+    {% endif %}
 
     <!-- =====================================================
      Bug Trend
@@ -1250,11 +1900,11 @@ Dashboard
             });
         }
 
-            /*
-        * =====================================================
-        * Bug Trend
-        * =====================================================
-        */
+        /*
+    * =====================================================
+    * Bug Trend
+    * =====================================================
+    */
 
         const bugTrendCanvas =
             document.getElementById("bugTrendChart");
