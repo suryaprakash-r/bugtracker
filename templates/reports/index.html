@@ -587,6 +587,323 @@ Reports
         </div>
 
     </div>
+    <!-- =====================================================
+     Project Report
+     ===================================================== -->
+
+    <div class="dashboard-card report-project-card mb-4">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3 class="dashboard-card-title">
+                    Project Report
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Bug metrics across your accessible projects
+                </p>
+
+            </div>
+
+            <span class="report-section-count">
+                {{ report_project_count }} Projects
+            </span>
+
+        </div>
+
+
+        {% if project_report %}
+
+        <div class="report-project-wrapper">
+
+            <table class="table report-project-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Project</th>
+                        <th>Manager</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Open</th>
+                        <th>Resolved</th>
+                        <th>Testing</th>
+                        <th>Closed</th>
+                        <th>Reopened</th>
+                        <th>Critical</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for project in project_report %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="report-project-name">
+
+                                <strong>
+                                    {{ project.project_key }}
+                                </strong>
+
+                                <span>
+                                    {{ project.name }}
+                                </span>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="report-manager-name">
+                                {{ project.manager.username }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="report-project-status status-{{ project.status|lower }}">
+                                {{ project.get_status_display }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+                            <strong>{{ project.total_bugs }}</strong>
+                        </td>
+
+
+                        <td>
+                            {{ project.open_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ project.resolved_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ project.testing_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ project.closed_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ project.reopened_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ project.critical_bugs }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="dashboard-empty">
+
+            <i class="bi bi-folder2-open"></i>
+
+            <p>
+                No project reporting data is available.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- =====================================================
+         Developer Workload
+         ===================================================== -->
+
+    <div class="dashboard-card report-developer-card mb-4">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3 class="dashboard-card-title">
+                    Developer Workload
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Bug assignment and workflow metrics across your accessible projects
+                </p>
+
+            </div>
+
+            <span class="report-section-count">
+                {{ developer_workload|length }} Developers
+            </span>
+
+        </div>
+
+
+        {% if developer_workload %}
+
+        <div class="report-developer-wrapper">
+
+            <table class="table report-developer-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Developer</th>
+                        <th>Total</th>
+                        <th>Open</th>
+                        <th>Resolved</th>
+                        <th>Testing</th>
+                        <th>Closed</th>
+                        <th>Reopened</th>
+                        <th>Critical</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for developer in developer_workload %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="report-developer-info">
+
+                                <div class="report-developer-avatar">
+                                    <i class="bi bi-person-fill"></i>
+                                </div>
+
+                                <div class="report-developer-details">
+
+                                    <strong>
+                                        {% if developer.get_full_name %}
+                                        {{ developer.get_full_name }}
+                                        {% else %}
+                                        {{ developer.username }}
+                                        {% endif %}
+                                    </strong>
+
+                                    <span>
+                                        @{{ developer.username }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            <strong class="report-metric-total">
+                                {{ developer.total_bugs }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+                            {{ developer.open_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ developer.resolved_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ developer.testing_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ developer.closed_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ developer.reopened_bugs }}
+                        </td>
+
+
+                        <td>
+
+                            {% if developer.critical_bugs > 0 %}
+
+                            <span class="report-critical-count">
+                                {{ developer.critical_bugs }}
+                            </span>
+
+                            {% else %}
+
+                            <span class="report-zero-count">
+                                0
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="dashboard-empty">
+
+            <i class="bi bi-people"></i>
+
+            <p>
+                No developer workload data is available.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
 
 </div>
 
@@ -595,25 +912,25 @@ Reports
 {% block extra_js %}
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
 
-    const progressBars = document.querySelectorAll(
-        ".report-progress-bar"
-    );
-
-    progressBars.forEach(function (bar) {
-
-        const percentage = parseFloat(
-            bar.dataset.percentage
+        const progressBars = document.querySelectorAll(
+            ".report-progress-bar"
         );
 
-        if (!Number.isNaN(percentage)) {
-            bar.style.width = percentage + "%";
-        }
+        progressBars.forEach(function (bar) {
+
+            const percentage = parseFloat(
+                bar.dataset.percentage
+            );
+
+            if (!Number.isNaN(percentage)) {
+                bar.style.width = percentage + "%";
+            }
+
+        });
 
     });
-
-});
 </script>
 
 {% endblock %}
