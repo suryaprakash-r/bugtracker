@@ -688,6 +688,57 @@ Dashboard
     </div>
 
     <!-- =====================================================
+     Bug Trend
+     ===================================================== -->
+
+    <div class="dashboard-card bug-trend-card">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3 class="dashboard-card-title">
+                    Bug Trend
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Bug creation and resolution over the last 14 days
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="dashboard-card-body">
+
+            {% if dashboard.bug_trend %}
+
+            <div class="bug-trend-container">
+
+                <canvas id="bugTrendChart"></canvas>
+
+            </div>
+
+            {% else %}
+
+            <div class="dashboard-empty">
+
+                <i class="bi bi-graph-up"></i>
+
+                <p>
+                    No bug trend data available yet.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <!-- =====================================================
      Recent Activity
      ===================================================== -->
 
@@ -859,6 +910,9 @@ Dashboard
         {% endif %}
 
     </div>
+
+
+
     <!-- =====================================================
          Recent Bugs
          ===================================================== -->
@@ -999,6 +1053,7 @@ Dashboard
 
 {{ dashboard.status_counts|json_script:"status-chart-data" }}
 {{ dashboard.priority_counts|json_script:"priority-chart-data" }}
+{{ dashboard.bug_trend|json_script:"bug-trend-data" }}
 {{ dashboard.severity_counts|json_script:"severity-chart-data" }}
 
 <script>
@@ -1195,11 +1250,210 @@ Dashboard
             });
         }
 
+            /*
+        * =====================================================
+        * Bug Trend
+        * =====================================================
+        */
+
+        const bugTrendCanvas =
+            document.getElementById("bugTrendChart");
+
+        const bugTrendDataElement =
+            document.getElementById("bug-trend-data");
+
+        if (bugTrendCanvas && bugTrendDataElement) {
+
+            const bugTrendData =
+                JSON.parse(
+                    bugTrendDataElement.textContent
+                );
+
+            const trendLabels = bugTrendData.map(function (item) {
+                return item.date;
+            });
+
+            const createdValues = bugTrendData.map(function (item) {
+                return item.created;
+            });
+
+            const resolvedValues = bugTrendData.map(function (item) {
+                return item.resolved;
+            });
+
+
+            new Chart(bugTrendCanvas, {
+
+                type: "line",
+
+                data: {
+
+                    labels: trendLabels,
+
+                    datasets: [
+
+                        {
+                            label: "Created",
+
+                            data: createdValues,
+
+                            borderColor: "#3b82f6",
+                            backgroundColor: "rgba(59, 130, 246, 0.08)",
+
+                            borderWidth: 2,
+
+                            fill: true,
+
+                            tension: 0.35,
+
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+
+                            pointBackgroundColor: "#3b82f6",
+
+                            pointBorderWidth: 0
+                        },
+
+                        {
+                            label: "Resolved",
+
+                            data: resolvedValues,
+
+                            borderColor: "#22c55e",
+                            backgroundColor: "rgba(34, 197, 94, 0.06)",
+
+                            borderWidth: 2,
+
+                            fill: true,
+
+                            tension: 0.35,
+
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
+
+                            pointBackgroundColor: "#22c55e",
+
+                            pointBorderWidth: 0
+                        }
+
+                    ]
+
+                },
+
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
+
+
+                    scales: {
+
+                        x: {
+
+                            grid: {
+                                display: false
+                            },
+
+                            ticks: {
+                                color: "#8a93a3",
+                                font: {
+                                    size: 10
+                                },
+
+                                maxRotation: 0
+                            }
+
+                        },
+
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+
+                                precision: 0,
+
+                                color: "#8a93a3",
+
+                                font: {
+                                    size: 10
+                                }
+
+                            },
+
+                            grid: {
+                                color: "#eef1f5"
+                            }
+
+                        }
+
+                    },
+
+
+                    plugins: {
+
+                        legend: {
+
+                            position: "bottom",
+
+                            labels: {
+
+                                usePointStyle: true,
+
+                                pointStyle: "circle",
+
+                                padding: 16,
+
+                                font: {
+                                    size: 11
+                                }
+
+                            }
+
+                        },
+
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label: function (context) {
+
+                                    return (
+                                        " " +
+                                        context.dataset.label +
+                                        ": " +
+                                        context.parsed.y
+                                    );
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
         /*
-=====================================================
-Bugs by Severity
-=====================================================
-*/
+        =====================================================
+        Bugs by Severity
+        =====================================================
+        */
 
         const severityCanvas =
             document.getElementById("severityChart");

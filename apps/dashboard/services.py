@@ -1,3 +1,7 @@
+from datetime import timedelta
+
+from django.utils import timezone
+from django.db.models.functions import TruncDate
 from django.db.models import Count, Q
 
 from apps.bugs.models import Bug
@@ -102,6 +106,65 @@ def get_bug_distribution(bugs, field_name, choices):
             })
 
     return distribution
+
+
+def get_bug_trend(bugs, days=14):
+    """
+    Return daily bug creation and resolution counts
+    for the requested number of days.
+    """
+
+    today = timezone.localdate()
+    start_date = today - timedelta(days=days - 1)
+
+    date_range = [
+        start_date + timedelta(days=index)
+        for index in range(days)
+    ]
+
+    created_data = (
+        bugs.filter(
+            created_at__date__range=(start_date, today)
+        )
+        .annotate(
+            trend_date=TruncDate("created_at")
+        )
+        .values("trend_date")
+        .annotate(total=Count("id"))
+        .order_by("trend_date")
+    )
+
+    resolved_data = (
+        bugs.filter(
+            resolved_at__isnull=False,
+            resolved_at__date__range=(start_date, today)
+        )
+        .annotate(
+            trend_date=TruncDate("resolved_at")
+        )
+        .values("trend_date")
+        .annotate(total=Count("id"))
+        .order_by("trend_date")
+    )
+
+    created_counts = {
+        item["trend_date"]: item["total"]
+        for item in created_data
+    }
+
+    resolved_counts = {
+        item["trend_date"]: item["total"]
+        for item in resolved_data
+    }
+
+    return [
+        {
+            "date": trend_date.strftime("%d %b"),
+            "created": created_counts.get(trend_date, 0),
+            "resolved": resolved_counts.get(trend_date, 0),
+        }
+        for trend_date in date_range
+    ]
 
 def get_developer_workload(bugs):
     """
@@ -253,6 +316,7 @@ def get_dashboard_data(user):
 
     projects = get_visible_projects(user)
     bugs = get_visible_bugs(user)
+    bug_trend = get_bug_trend(bugs)
 
     # ---------------------------------------------------------
     # Project KPIs
@@ -363,4 +427,6 @@ def get_dashboard_data(user):
         
         "recent_bugs": recent_bugs,
         "recent_activity": recent_activity,
+        
+        "bug_trend": bug_trend,
     }
