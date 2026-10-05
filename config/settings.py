@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.projects',
     'apps.bugs',
     'apps.notifications',
+    'apps.reports',
 ]
 
 MIDDLEWARE = [
