@@ -1,6 +1,7 @@
 from django.db.models import Count, Q
 
 from apps.bugs.models import Bug
+from apps.notifications.models import ActivityLog
 from apps.projects.models import Project
 
 
@@ -210,6 +211,38 @@ def get_testing_workload(bugs):
         "reopened_bugs": reopened_bugs,
     }
 
+def get_visible_activity_logs(user, limit=10):
+    """
+    Return recent activity visible to the current user.
+
+    Project-linked activity is limited to the user's visible
+    projects.
+
+    Activity without a project is visible only to:
+    - the activity actor
+    - Admin / superuser
+    """
+
+    visible_projects = get_visible_projects(user)
+
+    if user.is_superuser or user.role == "ADMIN":
+        activity_logs = ActivityLog.objects.all()
+
+    else:
+        activity_logs = ActivityLog.objects.filter(
+            Q(project__in=visible_projects)
+            | Q(project__isnull=True, user=user)
+        )
+
+    return (
+        activity_logs
+        .select_related(
+            "user",
+            "project",
+        )
+        .order_by("-created_at")[:limit]
+    )
+
 def get_dashboard_data(user):
     """
     Build all data required by the dashboard.
@@ -286,6 +319,11 @@ def get_dashboard_data(user):
     testing_workload = get_testing_workload(
         bugs
     )
+    
+    recent_activity = get_visible_activity_logs(
+        user,
+        limit=10,
+    )
 
     # ---------------------------------------------------------
     # Recent bugs
@@ -324,4 +362,5 @@ def get_dashboard_data(user):
         "testing_workload": testing_workload,
         
         "recent_bugs": recent_bugs,
+        "recent_activity": recent_activity,
     }

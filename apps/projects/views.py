@@ -12,7 +12,7 @@ from apps.accounts.permissions import (
     role_required,
 )
 
-from apps.notifications.services import notify_project_member_added
+from apps.notifications.services import notify_project_member_added, create_activity_log
 
 from .forms import ProjectForm, ProjectMemberForm
 from .models import Project, ProjectMember
@@ -252,6 +252,17 @@ def project_create(request):
                 project.manager = request.user
 
             project.save()
+            
+            create_activity_log(
+                action="PROJECT_CREATED",
+                description=(
+                    f"{request.user.username} created project "
+                    f"{project.project_key} - {project.name}."
+                ),
+                user=request.user,
+                project=project,
+                request=request,
+            )
 
             messages.success(
                 request,
@@ -338,6 +349,18 @@ def project_update(request, project_id):
 
 
             updated_project.save()
+            
+            create_activity_log(
+                action="PROJECT_UPDATED",
+                description=(
+                    f"{request.user.username} updated project "
+                    f"{updated_project.project_key} - "
+                    f"{updated_project.name}."
+                ),
+                user=request.user,
+                project=updated_project,
+                request=request,
+            )
 
 
             messages.success(
@@ -416,6 +439,18 @@ def project_members(request, project_id):
                 user=membership.user,
                 project=membership.project,
             )
+            
+            create_activity_log(
+                action="PROJECT_MEMBER_ADDED",
+                description=(
+                    f"{request.user.username} added "
+                    f"{user.username} to project "
+                    f"{project.project_key} - {project.name}."
+                ),
+                user=request.user,
+                project=project,
+                request=request,
+            )
 
             messages.success(
                 request,
@@ -480,23 +515,52 @@ def project_member_toggle(request, project_id, member_id):
         update_fields=["is_active"]
     )
 
+    # if membership.is_active:
+
+    #     notify_project_member_added(
+    #         user=membership.user,
+    #         project=project,
+    #     )
+
+    #     messages.success(
+    #         request,
+    #         f"{membership.user.username} was activated in the project.",
+    #     )
+
+    # else:
+
+    #     messages.success(
+    #         request,
+    #         f"{membership.user.username} was deactivated from the project.",
+    #     )
+    
+    
     if membership.is_active:
 
-        notify_project_member_added(
-            user=membership.user,
+        create_activity_log(
+            action="PROJECT_MEMBER_ACTIVATED",
+            description=(
+                f"{request.user.username} activated "
+                f"{membership.user.username} in project "
+                f"{project.project_key} - {project.name}."
+            ),
+            user=request.user,
             project=project,
-        )
-
-        messages.success(
-            request,
-            f"{membership.user.username} was activated in the project.",
+            request=request,
         )
 
     else:
 
-        messages.success(
-            request,
-            f"{membership.user.username} was deactivated from the project.",
+        create_activity_log(
+            action="PROJECT_MEMBER_DEACTIVATED",
+            description=(
+                f"{request.user.username} deactivated "
+                f"{membership.user.username} from project "
+                f"{project.project_key} - {project.name}."
+            ),
+            user=request.user,
+            project=project,
+            request=request,
         )
 
     return redirect(

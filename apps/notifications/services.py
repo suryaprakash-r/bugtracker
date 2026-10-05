@@ -1,4 +1,4 @@
-from .models import Notification
+from .models import ActivityLog, Notification
 
 
 def create_notification(
@@ -49,7 +49,53 @@ def create_notification(
 
     return notification
 
+def create_activity_log(
+    *,
+    action,
+    description,
+    user=None,
+    project=None,
+    request=None,
+):
+    """
+    Create an activity log entry.
 
+    Args:
+        action: Short action name.
+        description: Human-readable activity description.
+        user: User who performed the action.
+        project: Optional related project.
+        request: Optional Django request used to capture
+                 the client's IP address.
+
+    Returns:
+        ActivityLog instance.
+    """
+
+    if not action:
+        raise ValueError("Activity action is required.")
+
+    if len(action) > 100:
+        raise ValueError(
+            "Activity action must not exceed 100 characters."
+        )
+
+    ip_address = None
+
+    if request is not None:
+        ip_address = request.META.get(
+            "REMOTE_ADDR"
+        )
+
+    activity_log = ActivityLog.objects.create(
+        user=user,
+        project=project,
+        action=action,
+        description=description,
+        ip_address=ip_address,
+    )
+
+    return activity_log
 
 def notify_bug_status_change(
     *,

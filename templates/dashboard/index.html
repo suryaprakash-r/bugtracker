@@ -687,7 +687,178 @@ Dashboard
 
     </div>
 
+    <!-- =====================================================
+     Recent Activity
+     ===================================================== -->
 
+    <div class="dashboard-card recent-activity-card">
+
+        <div class="dashboard-card-header">
+
+            <div>
+                <h3 class="dashboard-card-title">
+                    Recent Activity
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Latest activity across your visible projects
+                </p>
+            </div>
+
+        </div>
+
+
+        {% if dashboard.recent_activity %}
+
+        <div class="recent-activity-list">
+
+            {% for activity in dashboard.recent_activity %}
+
+            <div class="recent-activity-item">
+
+                <div class="recent-activity-icon">
+
+                    {% if activity.action == "BUG_CREATED" %}
+                    <i class="bi bi-bug"></i>
+
+                    {% elif activity.action == "BUG_UPDATED" %}
+                    <i class="bi bi-pencil-square"></i>
+
+                    {% elif activity.action == "BUG_ASSIGNED" %}
+                    <i class="bi bi-person-check"></i>
+
+                    {% elif activity.action == "BUG_STATUS_CHANGED" %}
+                    <i class="bi bi-arrow-left-right"></i>
+
+                    {% elif activity.action == "COMMENT_ADDED" %}
+                    <i class="bi bi-chat-left-text"></i>
+
+                    {% elif activity.action == "ATTACHMENT_UPLOADED" %}
+                    <i class="bi bi-paperclip"></i>
+
+                    {% elif activity.action == "PROJECT_CREATED" %}
+                    <i class="bi bi-folder-plus"></i>
+
+                    {% elif activity.action == "PROJECT_UPDATED" %}
+                    <i class="bi bi-folder2-open"></i>
+
+                    {% elif activity.action == "PROJECT_MEMBER_ADDED" %}
+                    <i class="bi bi-person-plus"></i>
+
+                    {% elif activity.action == "PROJECT_MEMBER_ACTIVATED" %}
+                    <i class="bi bi-person-check"></i>
+
+                    {% elif activity.action == "PROJECT_MEMBER_DEACTIVATED" %}
+                    <i class="bi bi-person-dash"></i>
+
+                    {% else %}
+                    <i class="bi bi-activity"></i>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="recent-activity-content">
+
+                    <div class="recent-activity-top">
+
+                        <span class="recent-activity-action">
+
+                            {% if activity.action == "BUG_CREATED" %}
+                            Bug Created
+
+                            {% elif activity.action == "BUG_UPDATED" %}
+                            Bug Updated
+
+                            {% elif activity.action == "BUG_ASSIGNED" %}
+                            Bug Assigned
+
+                            {% elif activity.action == "BUG_STATUS_CHANGED" %}
+                            Status Changed
+
+                            {% elif activity.action == "COMMENT_ADDED" %}
+                            Comment Added
+
+                            {% elif activity.action == "ATTACHMENT_UPLOADED" %}
+                            Attachment Uploaded
+
+                            {% elif activity.action == "PROJECT_CREATED" %}
+                            Project Created
+
+                            {% elif activity.action == "PROJECT_UPDATED" %}
+                            Project Updated
+
+                            {% elif activity.action == "PROJECT_MEMBER_ADDED" %}
+                            Member Added
+
+                            {% elif activity.action == "PROJECT_MEMBER_ACTIVATED" %}
+                            Member Activated
+
+                            {% elif activity.action == "PROJECT_MEMBER_DEACTIVATED" %}
+                            Member Deactivated
+
+                            {% else %}
+                            Activity
+
+                            {% endif %}
+
+                        </span>
+
+                        <span class="recent-activity-time">
+                            {{ activity.created_at|date:"d M Y, h:i A" }}
+                        </span>
+
+                    </div>
+
+
+                    <p class="recent-activity-description">
+                        {{ activity.description }}
+                    </p>
+
+
+                    <div class="recent-activity-meta">
+
+                        {% if activity.user %}
+                        <span>
+                            <i class="bi bi-person"></i>
+                            {{ activity.user.username }}
+                        </span>
+                        {% endif %}
+
+
+                        {% if activity.project %}
+                        <span>
+                            <i class="bi bi-folder2"></i>
+                            {{ activity.project.project_key }}
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="dashboard-empty">
+
+            <i class="bi bi-activity"></i>
+
+            <p>
+                No recent activity available yet.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
     <!-- =====================================================
          Recent Bugs
          ===================================================== -->

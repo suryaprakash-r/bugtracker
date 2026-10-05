@@ -51,6 +51,7 @@ from apps.notifications.services import (
     create_notification,
     notify_bug_status_change,
     notify_bug_comment,
+    create_activity_log,
 )
 
 @login_required
@@ -364,6 +365,18 @@ def bug_create(request):
                 bug.save()
 
 
+            create_activity_log(
+                action="BUG_CREATED",
+                description=(
+                    f"{request.user.username} created bug "
+                    f"{bug.bug_code} in project "
+                    f"{bug.project.name}."
+                ),
+                user=request.user,
+                project=bug.project,
+                request=request,
+            )
+            
             messages.success(
                 request,
                 f"Bug {bug.bug_code} was created successfully.",
@@ -421,6 +434,18 @@ def bug_update(request, bug_id):
         if form.is_valid():
 
             updated_bug = form.save()
+            
+            create_activity_log(
+                action="BUG_UPDATED",
+                description=(
+                    f"{request.user.username} updated bug "
+                    f"{updated_bug.bug_code} in project "
+                    f"{updated_bug.project.name}."
+                ),
+                user=request.user,
+                project=updated_bug.project,
+                request=request,
+            )
 
             messages.success(
                 request,
@@ -565,18 +590,20 @@ def bug_assign(request, bug_id):
                             f"{developer.username}."
                         ),
                     )
-
-
-            # if previous_assignee_id == developer.id:
-
-            #     messages.success(
-            #         request,
-            #         (
-            #             f"Bug {bug.bug_code} is already assigned "
-            #             f"to {developer.username}."
-            #         ),
-            #     )
-            
+            if previous_assignee_id != developer.id:
+                create_activity_log(
+                    action="BUG_ASSIGNED",
+                    description=(
+                        f"{request.user.username} assigned bug "
+                        f"{bug.bug_code} to {developer.username} "
+                        f"in project {bug.project.name}."
+                    ),
+                    user=request.user,
+                    project=bug.project,
+                    request=request,
+                )
+                
+                
             if previous_assignee_id != developer.id:
                 create_notification(
                     recipient=developer,
@@ -758,6 +785,20 @@ def bug_status_change(request, bug_id):
                     changed_by=request.user,
                 )
 
+            old_label = dict(Bug.Status.choices)[old_status]
+            new_label = dict(Bug.Status.choices)[requested_status]
+
+            create_activity_log(
+                action="BUG_STATUS_CHANGED",
+                description=(
+                    f"{request.user.username} changed bug "
+                    f"{bug.bug_code} status from "
+                    f"{old_label} to {new_label}."
+                ),
+                user=request.user,
+                project=bug.project,
+                request=request,
+            )
 
             messages.success(
                 request,
@@ -840,11 +881,24 @@ def bug_comment_create(request, bug_id):
             bug.id,
         )
 
+    
 
     comment = BugComment.objects.create(
         bug=bug,
         user=request.user,
         message=form.cleaned_data["message"],
+    )
+    
+    create_activity_log(
+        action="COMMENT_ADDED",
+        description=(
+            f"{request.user.username} added a comment to "
+            f"bug {bug.bug_code} in project "
+            f"{bug.project.name}."
+        ),
+        user=request.user,
+        project=bug.project,
+        request=request,
     )
     
     notify_bug_comment(
@@ -1035,6 +1089,19 @@ def bug_attachment_upload(request, bug_id):
 
     attachment.file_size = attachment.file.size
     attachment.save()
+    
+    create_activity_log(
+        action="ATTACHMENT_UPLOADED",
+        description=(
+            f"{request.user.username} uploaded attachment "
+            f"{attachment.file_name} to bug "
+            f"{bug.bug_code} in project "
+            f"{bug.project.name}."
+        ),
+        user=request.user,
+        project=bug.project,
+        request=request,
+    )
 
 
     messages.success(
