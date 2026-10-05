@@ -346,3 +346,95 @@ def get_developer_workload_report(user):
             "username",
         )
     )
+    
+def get_tester_qa_report(user):
+    """
+    Return tester / QA workload metrics for testers who are
+    active members of the user's report-visible projects.
+
+    Testers with zero assigned bugs are included so the report
+    represents the full visible QA team.
+    """
+
+    projects = get_visible_report_projects(user)
+
+    if not projects.exists():
+        return User.objects.none()
+
+    return (
+        User.objects.filter(
+            role=User.Role.TESTER,
+            project_memberships__project__in=projects,
+            project_memberships__is_active=True,
+            is_active=True,
+        )
+        .distinct()
+        .annotate(
+            total_bugs=Count(
+                "assigned_bugs",
+                filter=Q(
+                    assigned_bugs__project__in=projects,
+                ),
+                distinct=True,
+            ),
+            open_bugs=Count(
+                "assigned_bugs",
+                filter=Q(
+                    assigned_bugs__project__in=projects,
+                    assigned_bugs__status__in=[
+                        Bug.Status.NEW,
+                        Bug.Status.ASSIGNED,
+                        Bug.Status.IN_PROGRESS,
+                        Bug.Status.REOPENED,
+                    ],
+                ),
+                distinct=True,
+            ),
+            resolved_bugs=Count(
+                "assigned_bugs",
+                filter=Q(
+                    assigned_bugs__project__in=projects,
+                    assigned_bugs__status=Bug.Status.RESOLVED,
+                ),
+                distinct=True,
+            ),
+            testing_bugs=Count(
+                "assigned_bugs",
+                filter=Q(
+                    assigned_bugs__project__in=projects,
+                    assigned_bugs__status=Bug.Status.TESTING,
+                ),
+                distinct=True,
+            ),
+            closed_bugs=Count(
+                "assigned_bugs",
+                filter=Q(
+                    assigned_bugs__project__in=projects,
+                    assigned_bugs__status=Bug.Status.CLOSED,
+                ),
+                distinct=True,
+            ),
+            reopened_bugs=Count(
+                "assigned_bugs",
+                filter=Q(
+                    assigned_bugs__project__in=projects,
+                    assigned_bugs__status=Bug.Status.REOPENED,
+                ),
+                distinct=True,
+            ),
+            critical_bugs=Count(
+                "assigned_bugs",
+                filter=Q(
+                    assigned_bugs__project__in=projects,
+                    assigned_bugs__severity=Bug.Severity.CRITICAL,
+                ),
+                distinct=True,
+            ),
+        )
+        .order_by(
+            "-testing_bugs",
+            "-total_bugs",
+            "first_name",
+            "username",
+        )
+    )

@@ -9,6 +9,7 @@ from .services import (
     get_bug_summary_report,
     get_project_report,
     get_developer_workload_report,
+    get_tester_qa_report,
 )
 
 @login_required
@@ -26,6 +27,7 @@ def report_index(request):
     bug_summary = get_bug_summary_report(bugs)
     project_report = get_project_report(request.user)
     developer_workload = get_developer_workload_report(request.user)
+    tester_qa_report = get_tester_qa_report(request.user)
 
     return render(
         request,
@@ -34,7 +36,9 @@ def report_index(request):
             "report_project_count": projects.count(),
             "report_bug_count": bugs.count(),
             "bug_summary": bug_summary,
+            
             "project_report": project_report,
             "developer_workload": developer_workload,
+            "tester_qa_report": tester_qa_report,
         },
     )

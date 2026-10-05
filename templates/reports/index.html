@@ -905,6 +905,480 @@ Reports
 
     </div>
 
+    <!-- =====================================================
+     Tester / QA Report
+     ===================================================== -->
+
+    <div class="dashboard-card report-tester-card mb-4">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3 class="dashboard-card-title">
+                    Tester / QA Report
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Testing workload and bug verification metrics across your accessible projects
+                </p>
+
+            </div>
+
+            <span class="report-section-count">
+                {{ tester_qa_report|length }} Testers
+            </span>
+
+        </div>
+
+
+        {% if tester_qa_report %}
+
+        <div class="report-tester-wrapper">
+
+            <table class="table report-tester-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Tester</th>
+                        <th>Total</th>
+                        <th>Open</th>
+                        <th>Resolved</th>
+                        <th>Testing</th>
+                        <th>Closed</th>
+                        <th>Reopened</th>
+                        <th>Critical</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for tester in tester_qa_report %}
+
+                    <tr>
+
+                        <td>
+
+                            <div class="report-tester-info">
+
+                                <div class="report-tester-avatar">
+                                    <i class="bi bi-clipboard-check-fill"></i>
+                                </div>
+
+                                <div class="report-tester-details">
+
+                                    <strong>
+                                        {% if tester.get_full_name %}
+                                        {{ tester.get_full_name }}
+                                        {% else %}
+                                        {{ tester.username }}
+                                        {% endif %}
+                                    </strong>
+
+                                    <span>
+                                        @{{ tester.username }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                        </td>
+
+
+                        <td>
+                            <strong class="report-metric-total">
+                                {{ tester.total_bugs }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+                            {{ tester.open_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ tester.resolved_bugs }}
+                        </td>
+
+
+                        <td>
+
+                            {% if tester.testing_bugs > 0 %}
+
+                            <span class="report-testing-count">
+                                {{ tester.testing_bugs }}
+                            </span>
+
+                            {% else %}
+
+                            <span class="report-zero-count">
+                                0
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ tester.closed_bugs }}
+                        </td>
+
+
+                        <td>
+                            {{ tester.reopened_bugs }}
+                        </td>
+
+
+                        <td>
+
+                            {% if tester.critical_bugs > 0 %}
+
+                            <span class="report-critical-count">
+                                {{ tester.critical_bugs }}
+                            </span>
+
+                            {% else %}
+
+                            <span class="report-zero-count">
+                                0
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="dashboard-empty">
+
+            <i class="bi bi-clipboard-x"></i>
+
+            <p>
+                No tester or QA workload data is available.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- =====================================================
+     Detailed Status Report
+     ===================================================== -->
+
+    <div class="dashboard-card report-status-card mb-4">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3 class="dashboard-card-title">
+                    Status Report
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Detailed distribution of bugs by current workflow status
+                </p>
+
+            </div>
+
+            <span class="report-section-count">
+                {{ bug_summary.total_bugs }} Bugs
+            </span>
+
+        </div>
+
+
+        {% if bug_summary.total_bugs %}
+
+        <div class="report-detail-grid">
+
+            {% for item in bug_summary.status_counts %}
+
+            <div class="report-detail-item">
+
+                <div class="report-detail-header">
+
+                    <div class="report-detail-label">
+
+                        {% if item.value == "NEW" %}
+                        <span class="report-breakdown-dot report-dot-new"></span>
+                        {% elif item.value == "ASSIGNED" %}
+                        <span class="report-breakdown-dot report-dot-assigned"></span>
+                        {% elif item.value == "IN_PROGRESS" %}
+                        <span class="report-breakdown-dot report-dot-in-progress"></span>
+                        {% elif item.value == "RESOLVED" %}
+                        <span class="report-breakdown-dot report-dot-resolved"></span>
+                        {% elif item.value == "TESTING" %}
+                        <span class="report-breakdown-dot report-dot-testing"></span>
+                        {% elif item.value == "CLOSED" %}
+                        <span class="report-breakdown-dot report-dot-closed"></span>
+                        {% elif item.value == "REOPENED" %}
+                        <span class="report-breakdown-dot report-dot-reopened"></span>
+                        {% endif %}
+
+                        <span>
+                            {{ item.label }}
+                        </span>
+
+                    </div>
+
+                    <div class="report-detail-values">
+
+                        <strong>
+                            {{ item.total }}
+                        </strong>
+
+                        <span>
+                            {{ item.percentage }}%
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-progress">
+
+                    <div class="report-progress-bar" data-percentage="{{ item.percentage }}"></div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="dashboard-empty">
+
+            <i class="bi bi-bar-chart"></i>
+
+            <p>
+                No status reporting data is available.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- =====================================================
+     Detailed Priority Report
+     ===================================================== -->
+
+    <div class="dashboard-card report-priority-card mb-4">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3 class="dashboard-card-title">
+                    Priority Report
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Detailed distribution of bugs by priority level
+                </p>
+
+            </div>
+
+            <span class="report-section-count">
+                {{ bug_summary.total_bugs }} Bugs
+            </span>
+
+        </div>
+
+
+        {% if bug_summary.total_bugs %}
+
+        <div class="report-detail-grid">
+
+            {% for item in bug_summary.priority_counts %}
+
+            <div class="report-detail-item">
+
+                <div class="report-detail-header">
+
+                    <div class="report-detail-label">
+
+                        {% if item.value == "URGENT" %}
+                        <span class="report-breakdown-dot report-dot-urgent"></span>
+                        {% elif item.value == "HIGH" %}
+                        <span class="report-breakdown-dot report-dot-high"></span>
+                        {% elif item.value == "MEDIUM" %}
+                        <span class="report-breakdown-dot report-dot-medium"></span>
+                        {% elif item.value == "LOW" %}
+                        <span class="report-breakdown-dot report-dot-low"></span>
+                        {% endif %}
+
+                        <span>
+                            {{ item.label }}
+                        </span>
+
+                    </div>
+
+                    <div class="report-detail-values">
+
+                        <strong>
+                            {{ item.total }}
+                        </strong>
+
+                        <span>
+                            {{ item.percentage }}%
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-progress">
+
+                    <div class="report-progress-bar" data-percentage="{{ item.percentage }}"></div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="dashboard-empty">
+
+            <i class="bi bi-sort-down"></i>
+
+            <p>
+                No priority reporting data is available.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+    <!-- =====================================================
+     Detailed Severity Report
+     ===================================================== -->
+
+    <div class="dashboard-card report-severity-card mb-4">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3 class="dashboard-card-title">
+                    Severity Report
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Detailed distribution of bugs by severity level
+                </p>
+
+            </div>
+
+            <span class="report-section-count">
+                {{ bug_summary.total_bugs }} Bugs
+            </span>
+
+        </div>
+
+
+        {% if bug_summary.total_bugs %}
+
+        <div class="report-detail-grid">
+
+            {% for item in bug_summary.severity_counts %}
+
+            <div class="report-detail-item">
+
+                <div class="report-detail-header">
+
+                    <div class="report-detail-label">
+
+                        {% if item.value == "CRITICAL" %}
+                        <span class="report-breakdown-dot report-dot-critical"></span>
+                        {% elif item.value == "HIGH" %}
+                        <span class="report-breakdown-dot report-dot-high"></span>
+                        {% elif item.value == "MEDIUM" %}
+                        <span class="report-breakdown-dot report-dot-medium"></span>
+                        {% elif item.value == "LOW" %}
+                        <span class="report-breakdown-dot report-dot-low"></span>
+                        {% endif %}
+
+                        <span>
+                            {{ item.label }}
+                        </span>
+
+                    </div>
+
+                    <div class="report-detail-values">
+
+                        <strong>
+                            {{ item.total }}
+                        </strong>
+
+                        <span>
+                            {{ item.percentage }}%
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-progress">
+
+                    <div class="report-progress-bar" data-percentage="{{ item.percentage }}"></div>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <div class="dashboard-empty">
+
+            <i class="bi bi-shield-exclamation"></i>
+
+            <p>
+                No severity reporting data is available.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
 </div>
 
 {% endblock %}
