@@ -3,8 +3,10 @@ from datetime import date
 import csv
 
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.template.loader import render_to_string
 
 from apps.accounts.permissions import Permission, role_required
 
@@ -206,6 +208,27 @@ def report_index(request):
         start_date=start_date,
         end_date=end_date,
     )
+    
+    project_paginator = Paginator(
+        context["project_report"],
+        5,
+    )
+
+    project_page = project_paginator.get_page(
+        request.GET.get("project_page")
+    )
+
+    context["project_report"] = project_page
+    context["project_page"] = project_page
+    
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+        html = render_to_string(
+            "reports/_project_report.html",
+            context,
+            request=request,
+        )
+
+        return HttpResponse(html)
 
     return render(
         request,

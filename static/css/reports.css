@@ -944,7 +944,7 @@
     position: absolute;
     top: calc(100% + 0.55rem);
     right: 0;
-    z-index: 20;
+    z-index: 100;
     width: 245px;
     padding: 0.45rem;
     border: 1px solid var(--border-color, #e5e7eb);
@@ -1028,6 +1028,9 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: 1.5rem;
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
 }
 
 .reports-header > div:first-child {
@@ -1050,6 +1053,434 @@
     right: 0;
     left: auto;
     width: 245px;
+}
+
+/* =========================================================
+   Report Table Scrollbars
+   ========================================================= */
+
+.report-project-wrapper,
+.report-developer-wrapper,
+.report-tester-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+
+.report-project-wrapper::-webkit-scrollbar,
+.report-developer-wrapper::-webkit-scrollbar,
+.report-tester-wrapper::-webkit-scrollbar {
+    height: 7px;
+}
+
+.report-project-wrapper::-webkit-scrollbar-track,
+.report-developer-wrapper::-webkit-scrollbar-track,
+.report-tester-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.report-project-wrapper::-webkit-scrollbar-thumb,
+.report-developer-wrapper::-webkit-scrollbar-thumb,
+.report-tester-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+.report-project-wrapper::-webkit-scrollbar-thumb:hover,
+.report-developer-wrapper::-webkit-scrollbar-thumb:hover,
+.report-tester-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* =========================================================
+   11.11 — Modern Report Card System
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Shared Report Cards
+   --------------------------------------------------------- */
+
+.report-breakdown-card,
+.report-project-card,
+.report-developer-card,
+.report-tester-card,
+.report-status-card,
+.report-priority-card,
+.report-severity-card {
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(15, 23, 42, 0.05));
+    overflow: hidden;
+    transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.report-breakdown-card:hover,
+.report-project-card:hover,
+.report-developer-card:hover,
+.report-tester-card:hover,
+.report-status-card:hover,
+.report-priority-card:hover,
+.report-severity-card:hover {
+    box-shadow: var(--shadow-md, 0 8px 24px rgba(15, 23, 42, 0.08));
+}
+
+
+/* ---------------------------------------------------------
+   Shared Report Section Header
+   --------------------------------------------------------- */
+
+.report-breakdown-card .dashboard-card-header,
+.report-project-card .dashboard-card-header,
+.report-developer-card .dashboard-card-header,
+.report-tester-card .dashboard-card-header,
+.report-status-card .dashboard-card-header,
+.report-priority-card .dashboard-card-header,
+.report-severity-card .dashboard-card-header {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    background: var(--surface, #ffffff);
+}
+
+.report-breakdown-card .dashboard-card-title,
+.report-project-card .dashboard-card-title,
+.report-developer-card .dashboard-card-title,
+.report-tester-card .dashboard-card-title,
+.report-status-card .dashboard-card-title,
+.report-priority-card .dashboard-card-title,
+.report-severity-card .dashboard-card-title {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.2px;
+}
+
+.report-breakdown-card .dashboard-card-subtitle,
+.report-project-card .dashboard-card-subtitle,
+.report-developer-card .dashboard-card-subtitle,
+.report-tester-card .dashboard-card-subtitle,
+.report-status-card .dashboard-card-subtitle,
+.report-priority-card .dashboard-card-subtitle,
+.report-severity-card .dashboard-card-subtitle {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+
+/* ---------------------------------------------------------
+   Breakdown Cards
+   --------------------------------------------------------- */
+
+.report-breakdown-card .dashboard-card-body {
+    padding: 18px 20px;
+}
+
+.report-breakdown-list {
+    gap: 13px;
+}
+
+.report-breakdown-item {
+    padding: 12px 14px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 12px;
+    background: #fbfcfe;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.report-breakdown-item:hover {
+    transform: translateY(-1px);
+    border-color: #dbe4f0;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.report-breakdown-header {
+    margin-bottom: 9px;
+}
+
+
+/* ---------------------------------------------------------
+   Detailed Report Cards
+   --------------------------------------------------------- */
+
+.report-status-card,
+.report-priority-card,
+.report-severity-card {
+    margin-bottom: 20px;
+}
+
+.report-detail-grid {
+    gap: 12px;
+    padding: 18px 20px 20px;
+}
+
+.report-detail-item {
+    padding: 14px;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 12px;
+    background: #fbfcfe;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.report-detail-item:hover {
+    transform: translateY(-1px);
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+
+/* ---------------------------------------------------------
+   Project / Developer / Tester Tables
+   --------------------------------------------------------- */
+
+.report-project-card,
+.report-developer-card,
+.report-tester-card {
+    margin-bottom: 20px;
+}
+
+.report-project-wrapper,
+.report-developer-wrapper,
+.report-tester-wrapper {
+    background: var(--surface, #ffffff);
+}
+
+.report-project-table,
+.report-developer-table,
+.report-tester-table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.report-project-table thead th,
+.report-developer-table thead th,
+.report-tester-table thead th {
+    background: #f8fafc;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border, #e5e7eb);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.report-project-table tbody tr,
+.report-developer-table tbody tr,
+.report-tester-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+.report-project-table tbody tr:hover,
+.report-developer-table tbody tr:hover,
+.report-tester-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* ---------------------------------------------------------
+   Section Count Pill
+   --------------------------------------------------------- */
+
+.report-section-count {
+    padding: 5px 10px;
+    border: 1px solid #dbe4f0;
+    background: #f8fafc;
+    color: var(--text-secondary);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------
+   Date Filter Card
+   --------------------------------------------------------- */
+
+.report-filter-card {
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: var(--radius-lg, 16px);
+    box-shadow: var(--shadow-sm, 0 2px 8px rgba(15, 23, 42, 0.05));
+}
+
+.report-filter-card:hover {
+    box-shadow: var(--shadow-md, 0 8px 24px rgba(15, 23, 42, 0.08));
+}
+
+/* =========================================================
+   Project Report Pagination
+   ========================================================= */
+
+.report-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 14px 20px;
+    border-top: 1px solid var(--border, #e5e7eb);
+    background: #fbfcfe;
+}
+
+.report-pagination-info {
+    color: var(--text-secondary);
+    font-size: 11px;
+}
+
+.report-pagination-info strong {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.report-pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.report-pagination-btn {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.report-pagination-btn:hover {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: #2563eb;
+    transform: translateY(-1px);
+}
+
+.report-pagination-btn.active {
+    border-color: #2563eb;
+    background: #2563eb;
+    color: #ffffff;
+}
+
+.report-pagination-btn.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* =========================================================
+   AJAX Project Report Loading
+   ========================================================= */
+
+#project-report-section {
+    position: relative;
+    min-width: 0;
+}
+
+#project-report-section.is-loading {
+    opacity: 0.55;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+}
+
+#project-report-section.is-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin: -12px 0 0 -12px;
+    border: 3px solid #dbeafe;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: report-pagination-spin 0.7s linear infinite;
+}
+
+@keyframes report-pagination-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 576px) {
+
+    .report-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 14px;
+    }
+
+    .report-pagination-controls {
+        width: 100%;
+        justify-content: center;
+    }
+
+}
+
+/* ---------------------------------------------------------
+   Responsive
+   --------------------------------------------------------- */
+
+@media (max-width: 768px) {
+
+    .report-breakdown-card .dashboard-card-header,
+    .report-project-card .dashboard-card-header,
+    .report-developer-card .dashboard-card-header,
+    .report-tester-card .dashboard-card-header,
+    .report-status-card .dashboard-card-header,
+    .report-priority-card .dashboard-card-header,
+    .report-severity-card .dashboard-card-header {
+        padding: 16px;
+    }
+
+    .report-breakdown-card .dashboard-card-body {
+        padding: 16px;
+    }
+
+    .report-detail-grid {
+        padding: 16px;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .report-breakdown-item,
+    .report-detail-item {
+        padding: 12px;
+    }
+
+    .report-breakdown-card .dashboard-card-title,
+    .report-project-card .dashboard-card-title,
+    .report-developer-card .dashboard-card-title,
+    .report-tester-card .dashboard-card-title,
+    .report-status-card .dashboard-card-title,
+    .report-priority-card .dashboard-card-title,
+    .report-severity-card .dashboard-card-title {
+        font-size: 16px;
+    }
+
 }
 
 @media (max-width: 900px) {

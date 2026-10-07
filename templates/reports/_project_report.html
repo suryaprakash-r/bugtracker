@@ -1,0 +1,243 @@
+<div id="project-report-section">
+
+    <div class="dashboard-card report-project-card mb-4">
+
+        <div class="dashboard-card-header">
+
+            <div>
+
+                <h3 class="dashboard-card-title">
+                    Project Report
+                </h3>
+
+                <p class="dashboard-card-subtitle">
+                    Bug metrics across your accessible projects
+                </p>
+
+            </div>
+
+            <span class="report-section-count">
+                {{ report_project_count }} Projects
+            </span>
+
+        </div>
+
+
+        {% if project_report %}
+
+            <div class="report-project-wrapper">
+
+                <table class="table report-project-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Project</th>
+                            <th>Manager</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th>Open</th>
+                            <th>Resolved</th>
+                            <th>Testing</th>
+                            <th>Closed</th>
+                            <th>Reopened</th>
+                            <th>Critical</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for project in project_report %}
+
+                            <tr>
+
+                                <td>
+
+                                    <div class="report-project-name">
+
+                                        <strong>
+                                            {{ project.project_key }}
+                                        </strong>
+
+                                        <span>
+                                            {{ project.name }}
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="report-manager-name">
+                                        {{ project.manager.username }}
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="report-project-status status-{{ project.status|lower }}">
+                                        {{ project.get_status_display }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    <strong>
+                                        {{ project.total_bugs }}
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    {{ project.open_bugs }}
+                                </td>
+
+                                <td>
+                                    {{ project.resolved_bugs }}
+                                </td>
+
+                                <td>
+                                    {{ project.testing_bugs }}
+                                </td>
+
+                                <td>
+                                    {{ project.closed_bugs }}
+                                </td>
+
+                                <td>
+                                    {{ project.reopened_bugs }}
+                                </td>
+
+                                <td>
+                                    {{ project.critical_bugs }}
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% if project_page.has_other_pages %}
+
+                <div class="report-pagination">
+
+                    <div class="report-pagination-info">
+
+                        Showing
+
+                        <strong>
+                            {{ project_page.start_index }}
+                        </strong>
+
+                        –
+
+                        <strong>
+                            {{ project_page.end_index }}
+                        </strong>
+
+                        of
+
+                        <strong>
+                            {{ project_page.paginator.count }}
+                        </strong>
+
+                        projects
+
+                    </div>
+
+
+                    <div class="report-pagination-controls">
+
+                        {% if project_page.has_previous %}
+
+                            <a
+                                href="?project_page={{ project_page.previous_page_number }}{% if start_date %}&start_date={{ start_date|date:'Y-m-d' }}{% endif %}{% if end_date %}&end_date={{ end_date|date:'Y-m-d' }}{% endif %}"
+                                class="report-pagination-btn"
+                                aria-label="Previous page"
+                            >
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+
+                        {% else %}
+
+                            <span class="report-pagination-btn disabled">
+                                <i class="bi bi-chevron-left"></i>
+                            </span>
+
+                        {% endif %}
+
+
+                        {% for number in project_page.paginator.page_range %}
+
+                            {% if number == project_page.number %}
+
+                                <span class="report-pagination-btn active">
+                                    {{ number }}
+                                </span>
+
+                            {% else %}
+
+                                <a
+                                    href="?project_page={{ number }}{% if start_date %}&start_date={{ start_date|date:'Y-m-d' }}{% endif %}{% if end_date %}&end_date={{ end_date|date:'Y-m-d' }}{% endif %}"
+                                    class="report-pagination-btn"
+                                >
+                                    {{ number }}
+                                </a>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                        {% if project_page.has_next %}
+
+                            <a
+                                href="?project_page={{ project_page.next_page_number }}{% if start_date %}&start_date={{ start_date|date:'Y-m-d' }}{% endif %}{% if end_date %}&end_date={{ end_date|date:'Y-m-d' }}{% endif %}"
+                                class="report-pagination-btn"
+                                aria-label="Next page"
+                            >
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+                        {% else %}
+
+                            <span class="report-pagination-btn disabled">
+                                <i class="bi bi-chevron-right"></i>
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+        {% else %}
+
+            <div class="dashboard-empty">
+
+                <i class="bi bi-folder2-open"></i>
+
+                <p>
+                    No project reporting data is available.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>

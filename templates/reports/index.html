@@ -774,159 +774,12 @@ Reports
         </div>
 
     </div>
+
     <!-- =====================================================
      Project Report
      ===================================================== -->
 
-    <div class="dashboard-card report-project-card mb-4">
-
-        <div class="dashboard-card-header">
-
-            <div>
-
-                <h3 class="dashboard-card-title">
-                    Project Report
-                </h3>
-
-                <p class="dashboard-card-subtitle">
-                    Bug metrics across your accessible projects
-                </p>
-
-            </div>
-
-            <span class="report-section-count">
-                {{ report_project_count }} Projects
-            </span>
-
-        </div>
-
-
-        {% if project_report %}
-
-        <div class="report-project-wrapper">
-
-            <table class="table report-project-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>Project</th>
-                        <th>Manager</th>
-                        <th>Status</th>
-                        <th>Total</th>
-                        <th>Open</th>
-                        <th>Resolved</th>
-                        <th>Testing</th>
-                        <th>Closed</th>
-                        <th>Reopened</th>
-                        <th>Critical</th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    {% for project in project_report %}
-
-                    <tr>
-
-                        <td>
-
-                            <div class="report-project-name">
-
-                                <strong>
-                                    {{ project.project_key }}
-                                </strong>
-
-                                <span>
-                                    {{ project.name }}
-                                </span>
-
-                            </div>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="report-manager-name">
-                                {{ project.manager.username }}
-                            </span>
-
-                        </td>
-
-
-                        <td>
-
-                            <span class="report-project-status status-{{ project.status|lower }}">
-                                {{ project.get_status_display }}
-                            </span>
-
-                        </td>
-
-
-                        <td>
-                            <strong>{{ project.total_bugs }}</strong>
-                        </td>
-
-
-                        <td>
-                            {{ project.open_bugs }}
-                        </td>
-
-
-                        <td>
-                            {{ project.resolved_bugs }}
-                        </td>
-
-
-                        <td>
-                            {{ project.testing_bugs }}
-                        </td>
-
-
-                        <td>
-                            {{ project.closed_bugs }}
-                        </td>
-
-
-                        <td>
-                            {{ project.reopened_bugs }}
-                        </td>
-
-
-                        <td>
-                            {{ project.critical_bugs }}
-                        </td>
-
-                    </tr>
-
-                    {% endfor %}
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        {% else %}
-
-        <div class="dashboard-empty">
-
-            <i class="bi bi-folder2-open"></i>
-
-            <p>
-                No project reporting data is available.
-            </p>
-
-        </div>
-
-        {% endif %}
-
-    </div>
+    {% include "reports/_project_report.html" %}
 
     <!-- =====================================================
          Developer Workload
@@ -1607,6 +1460,128 @@ Reports
             });
 
         }
+
+        /* =====================================================
+       AJAX Project Pagination
+       ===================================================== */
+
+        async function loadProjectPage(url, updateHistory = true) {
+
+            const section = document.getElementById(
+                "project-report-section"
+            );
+
+            if (!section) {
+                return;
+            }
+
+            section.classList.add("is-loading");
+            section.setAttribute("aria-busy", "true");
+
+            try {
+
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Request failed with status ${response.status}`
+                    );
+                }
+
+                const html = await response.text();
+
+                section.outerHTML = html;
+
+                if (updateHistory) {
+
+                    window.history.pushState(
+                        {
+                            projectPagination: true,
+                        },
+                        "",
+                        url
+                    );
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Project pagination failed:",
+                    error
+                );
+
+            }
+        }
+
+
+        /* -----------------------------------------------------
+        Permanent document-level click delegation
+        ----------------------------------------------------- */
+
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                /*
+                * Only intercept normal left-clicks.
+                * Ctrl/Cmd/Shift/Alt clicks should keep
+                * normal browser behavior.
+                */
+
+                if (
+                    event.button !== 0 ||
+                    event.ctrlKey ||
+                    event.metaKey ||
+                    event.shiftKey ||
+                    event.altKey
+                ) {
+                    return;
+                }
+
+
+                const link = event.target.closest(
+                    "#project-report-section .report-pagination-btn[href]"
+                );
+
+
+                if (!link) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+                loadProjectPage(
+                    link.href
+                );
+
+            }
+        );
+
+
+        /* -----------------------------------------------------
+        Browser Back / Forward support
+        ----------------------------------------------------- */
+
+        window.addEventListener(
+            "popstate",
+            function () {
+
+                loadProjectPage(
+                    window.location.href,
+                    false
+                );
+
+            }
+        );
+
+        
 
     });
 </script>
