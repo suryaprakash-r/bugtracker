@@ -1,4 +1,5 @@
 {% extends "base/base.html" %}
+{% load static %}
 
 {% block title %}
 Edit Profile | BugTracker
@@ -8,96 +9,256 @@ Edit Profile | BugTracker
 Edit Profile
 {% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<h1>Edit Profile</h1>
+<div class="profile-page">
 
-    <form
-        method="post"
-        enctype="multipart/form-data"
-    >
+    <div class="profile-header">
 
-        {% csrf_token %}
-
-        <div>
-            <label>
-                Phone
-            </label>
-
-            <input
-                type="text"
-                name="phone"
-                value="{{ profile.phone }}"
-            >
+        <div class="profile-header-content">
+            <h1>Edit Profile</h1>
+            <p>Update your personal and professional information.</p>
         </div>
 
-        <br>
-
-        <div>
-            <label>
-                Designation
-            </label>
-
-            <input
-                type="text"
-                name="designation"
-                value="{{ profile.designation }}"
-            >
+        <div class="profile-header-actions">
+            <a href="{% url 'accounts:profile' %}" class="profile-back-btn">
+                <i class="bi bi-arrow-left"></i>
+                <span>Back to Profile</span>
+            </a>
         </div>
 
-        <br>
+    </div>
 
-        <div>
-            <label>
-                Department
-            </label>
 
-            <input
-                type="text"
-                name="department"
-                value="{{ profile.department }}"
-            >
+    <div class="profile-edit-grid">
+
+        <!-- Edit Form -->
+        <div class="profile-card profile-edit-card">
+
+            <div class="profile-card-header">
+                <div class="profile-card-icon">
+                    <i class="bi bi-person-gear"></i>
+                </div>
+
+                <div>
+                    <h2>Personal Information</h2>
+                    <p>Update the information shown on your profile.</p>
+                </div>
+            </div>
+
+
+            <form method="post" enctype="multipart/form-data" class="profile-edit-form">
+
+                {% csrf_token %}
+
+                <div class="profile-form-field">
+
+                    <label for="phone">
+                        Phone
+                    </label>
+
+                    <div class="profile-input-wrapper">
+                        <i class="bi bi-telephone"></i>
+
+                        <input type="text" id="phone" name="phone" value="{{ profile.phone }}"
+                            placeholder="Enter your phone number">
+                    </div>
+
+                </div>
+
+
+                <div class="profile-form-field">
+
+                    <label for="designation">
+                        Designation
+                    </label>
+
+                    <div class="profile-input-wrapper">
+
+                        <i class="bi bi-briefcase"></i>
+
+                        <input
+                            type="text"
+                            id="designation"
+                            name="designation"
+                            value="{{ profile.designation }}"
+                            placeholder="Enter your designation"
+                            {% if not is_admin %}disabled{% endif %}
+                        >
+
+                    </div>
+
+                    {% if not is_admin %}
+                        <span class="profile-field-help profile-admin-only">
+                            <i class="bi bi-lock-fill"></i>
+                            Only administrators can update this field.
+                        </span>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="profile-form-field">
+
+                    <label for="department">
+                        Department
+                    </label>
+
+                    <div class="profile-input-wrapper">
+
+                        <i class="bi bi-building"></i>
+
+                        <input
+                            type="text"
+                            id="department"
+                            name="department"
+                            value="{{ profile.department }}"
+                            placeholder="Enter your department"
+                            {% if not is_admin %}disabled{% endif %}
+                        >
+
+                    </div>
+
+                    {% if not is_admin %}
+                        <span class="profile-field-help profile-admin-only">
+                            <i class="bi bi-lock-fill"></i>
+                            Only administrators can update this field.
+                        </span>
+                    {% endif %}
+
+                </div>
+
+
+                <div class="profile-form-field">
+
+                    <label for="bio">
+                        Bio
+                    </label>
+
+                    <textarea id="bio" name="bio" rows="5"
+                        placeholder="Tell us a little about yourself...">{{ profile.bio }}</textarea>
+
+                    <span class="profile-field-help">
+                        A short summary about your professional background.
+                    </span>
+
+                </div>
+
+
+                <div class="profile-form-field">
+
+                    <label for="profile_image">
+                        Profile Image
+                    </label>
+
+                    <div class="profile-file-wrapper">
+                        <input type="file" id="profile_image" name="profile_image" accept="image/*">
+                    </div>
+
+                    <span class="profile-field-help">
+                        Select a new image to replace your current profile photo.
+                    </span>
+
+                </div>
+
+
+                <div class="profile-form-actions">
+
+                    <button type="submit" class="profile-save-btn">
+                        <i class="bi bi-check2-circle"></i>
+                        <span>Save Changes</span>
+                    </button>
+
+                    <a href="{% url 'accounts:profile' %}" class="profile-cancel-btn">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
         </div>
 
-        <br>
 
-        <div>
-            <label>
-                Bio
-            </label>
+        <!-- Profile Preview -->
+        <div class="profile-card profile-edit-preview-card">
 
-            <textarea
-                name="bio"
-                rows="5"
-            >{{ profile.bio }}</textarea>
+            <div class="profile-card-header">
+                <div class="profile-card-icon">
+                    <i class="bi bi-eye"></i>
+                </div>
+
+                <div>
+                    <h2>Profile Preview</h2>
+                    <p>Your current profile information.</p>
+                </div>
+            </div>
+
+
+            <div class="profile-preview-content">
+
+                <div class="profile-preview-avatar-wrapper">
+
+                    {% if profile.profile_image %}
+                    <img src="{{ profile.profile_image.url }}" alt="Current profile image"
+                        class="profile-preview-avatar">
+                    {% else %}
+                    <div class="profile-preview-avatar profile-avatar-placeholder">
+                        {{ request.user.username|first|upper }}
+                    </div>
+                    {% endif %}
+
+                </div>
+
+
+                <h3>{{ request.user.username }}</h3>
+
+                <p class="profile-preview-email">
+                    <i class="bi bi-envelope"></i>
+                    {{ request.user.email }}
+                </p>
+
+                <span class="profile-role-badge">
+                    <i class="bi bi-person-badge"></i>
+                    {{ request.user.get_role_display }}
+                </span>
+
+
+                <div class="profile-preview-details">
+
+                    <div class="profile-preview-item">
+                        <span>Designation</span>
+                        <strong>
+                            {{ profile.designation|default:"Not provided" }}
+                        </strong>
+                    </div>
+
+                    <div class="profile-preview-item">
+                        <span>Department</span>
+                        <strong>
+                            {{ profile.department|default:"Not provided" }}
+                        </strong>
+                    </div>
+
+                    <div class="profile-preview-item">
+                        <span>Phone</span>
+                        <strong>
+                            {{ profile.phone|default:"Not provided" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <br>
+    </div>
 
-        <div>
-            <label>
-                Profile Image
-            </label>
-
-            <input
-                type="file"
-                name="profile_image"
-                accept="image/*"
-            >
-        </div>
-
-        <br>
-
-        <button type="submit">
-            Save Changes
-        </button>
-
-    </form>
-
-    <br>
-
-    <a href="{% url 'accounts:profile' %}">
-        Cancel
-    </a>
+</div>
 
 {% endblock %}

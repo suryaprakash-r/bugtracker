@@ -85,20 +85,21 @@ def profile_edit(request):
             "",
         ).strip()
 
-        profile.designation = request.POST.get(
-            "designation",
-            "",
-        ).strip()
-
-        profile.department = request.POST.get(
-            "department",
-            "",
-        ).strip()
-
         profile.bio = request.POST.get(
             "bio",
             "",
         ).strip()
+
+        if request.user.role == "ADMIN":
+            profile.designation = request.POST.get(
+                "designation",
+                "",
+            ).strip()
+
+            profile.department = request.POST.get(
+                "department",
+                "",
+            ).strip()
 
         if request.FILES.get("profile_image"):
             profile.profile_image = request.FILES[
@@ -119,6 +120,7 @@ def profile_edit(request):
         "accounts/profile_edit.html",
         {
             "profile": profile,
+            "is_admin": request.user.role == "ADMIN",
         },
     )
 

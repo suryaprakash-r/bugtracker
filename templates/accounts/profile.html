@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-
+{% load static %}
 
 {% block title %}
 Profile | BugTracker
@@ -9,75 +9,278 @@ Profile | BugTracker
 Profile
 {% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
 {% block content %}
 
-<h1>My Profile</h1>
+<div class="profile-page">
+
+    <div class="profile-header">
+
+        <div class="profile-header-content">
+            <h1>My Profile</h1>
+            <p>Manage your personal information and account details.</p>
+        </div>
+
+        <div class="profile-header-actions">
+
+            <button type="button" class="profile-actions-toggle" id="profileActionsToggle" aria-expanded="false"
+                aria-haspopup="true">
+                <i class="bi bi-person-gear"></i>
+                <span>Profile Actions</span>
+                <i class="bi bi-chevron-down profile-actions-chevron"></i>
+            </button>
+
+            <div class="profile-actions-menu" id="profileActionsMenu">
+
+                <a href="{% url 'accounts:profile_edit' %}" class="profile-menu-item">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Edit Profile</span>
+                </a>
+
+                <a href="{% url 'accounts:password_change' %}" class="profile-menu-item">
+                    <i class="bi bi-shield-lock"></i>
+                    <span>Change Password</span>
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
 
     {% if messages %}
+    <div class="profile-messages">
         {% for message in messages %}
-            <p>{{ message }}</p>
+        <div class="profile-message {{ message.tags }}">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>{{ message }}</span>
+        </div>
         {% endfor %}
+    </div>
     {% endif %}
 
-    {% if profile.profile_image %}
-        <img
-            src="{{ profile.profile_image.url }}"
-            alt="Profile image"
-            width="120"
-        >
-    {% endif %}
+    <div class="profile-grid">
 
-    <p>
-        <strong>Username:</strong>
-        {{ request.user.username }}
-    </p>
+        <!-- Profile Summary -->
+        <div class="profile-card profile-summary-card">
 
-    <p>
-        <strong>Email:</strong>
-        {{ request.user.email }}
-    </p>
+            <div class="profile-avatar-wrapper">
 
-    <p>
-        <strong>Role:</strong>
-        {{ request.user.get_role_display }}
-    </p>
+                {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="Profile image" class="profile-avatar">
+                {% else %}
+                <div class="profile-avatar profile-avatar-placeholder">
+                    {{ request.user.username|first|upper }}
+                </div>
+                {% endif %}
 
-    <p>
-        <strong>Phone:</strong>
-        {{ profile.phone|default:"Not provided" }}
-    </p>
+            </div>
 
-    <p>
-        <strong>Designation:</strong>
-        {{ profile.designation|default:"Not provided" }}
-    </p>
+            <div class="profile-summary-content">
 
-    <p>
-        <strong>Department:</strong>
-        {{ profile.department|default:"Not provided" }}
-    </p>
+                <h2>{{ request.user.username }}</h2>
 
-    <p>
-        <strong>Bio:</strong>
-        {{ profile.bio|default:"Not provided" }}
-    </p>
+                <p class="profile-email">
+                    <i class="bi bi-envelope"></i>
+                    {{ request.user.email }}
+                </p>
 
-    <hr>
+                <span class="profile-role-badge">
+                    <i class="bi bi-person-badge"></i>
+                    {{ request.user.get_role_display }}
+                </span>
 
-    <a href="{% url 'accounts:profile_edit' %}">
-        Edit Profile
-    </a>
+            </div>
 
-    <br><br>
+        </div>
 
-    <a href="{% url 'accounts:password_change' %}">
-        Change Password
-    </a>
 
-    <br><br>
+        <!-- Account Information -->
+        <div class="profile-card">
 
-    <a href="{% url 'dashboard:index' %}">
-        Dashboard
-    </a>
+            <div class="profile-card-header">
+                <div class="profile-card-icon">
+                    <i class="bi bi-person-vcard"></i>
+                </div>
 
+                <div>
+                    <h2>Account Information</h2>
+                    <p>Your basic account details.</p>
+                </div>
+            </div>
+
+            <div class="profile-info-list">
+
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Username</span>
+                    <span class="profile-info-value">
+                        {{ request.user.username }}
+                    </span>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Email</span>
+                    <span class="profile-info-value">
+                        {{ request.user.email|default:"Not provided" }}
+                    </span>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Role</span>
+                    <span class="profile-info-value">
+                        {{ request.user.get_role_display }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Professional Information -->
+        <div class="profile-card">
+
+            <div class="profile-card-header">
+                <div class="profile-card-icon">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+
+                <div>
+                    <h2>Professional Information</h2>
+                    <p>Your work-related profile details.</p>
+                </div>
+            </div>
+
+            <div class="profile-info-list">
+
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Designation</span>
+                    <span class="profile-info-value">
+                        {{ profile.designation|default:"Not provided" }}
+                    </span>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Department</span>
+                    <span class="profile-info-value">
+                        {{ profile.department|default:"Not provided" }}
+                    </span>
+                </div>
+
+                <div class="profile-info-item">
+                    <span class="profile-info-label">Phone</span>
+                    <span class="profile-info-value">
+                        {{ profile.phone|default:"Not provided" }}
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Bio -->
+        <div class="profile-card">
+
+            <div class="profile-card-header">
+                <div class="profile-card-icon">
+                    <i class="bi bi-card-text"></i>
+                </div>
+
+                <div>
+                    <h2>About Me</h2>
+                    <p>Your personal profile summary.</p>
+                </div>
+            </div>
+
+            <div class="profile-bio">
+
+                {% if profile.bio %}
+                <p>{{ profile.bio }}</p>
+                {% else %}
+                <p class="profile-empty-text">
+                    No bio has been added yet.
+                </p>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Profile Actions -->
+    <!-- <div class="profile-actions-card">
+
+        <div class="profile-actions-header">
+            <div>
+                <h2>Profile Actions</h2>
+                <p>Update your information or manage your password.</p>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+
+            <a href="{% url 'accounts:profile_edit' %}" class="profile-action-btn profile-action-primary">
+                <i class="bi bi-pencil-square"></i>
+                <span>Edit Profile</span>
+            </a>
+
+            <a href="{% url 'accounts:password_change' %}" class="profile-action-btn profile-action-secondary">
+                <i class="bi bi-shield-lock"></i>
+                <span>Change Password</span>
+            </a>
+
+            <a href="{% url 'dashboard:index' %}" class="profile-action-btn profile-action-light">
+                <i class="bi bi-grid-1x2"></i>
+                <span>Back to Dashboard</span>
+            </a>
+
+        </div>
+
+    </div> -->
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggle = document.getElementById("profileActionsToggle");
+    const menu = document.getElementById("profileActionsMenu");
+
+    if (!toggle || !menu) {
+        return;
+    }
+
+    toggle.addEventListener("click", function (event) {
+        event.stopPropagation();
+
+        const isOpen = menu.classList.toggle("is-open");
+
+        toggle.classList.toggle("is-open", isOpen);
+        toggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    document.addEventListener("click", function (event) {
+
+        if (
+            !menu.contains(event.target) &&
+            !toggle.contains(event.target)
+        ) {
+            menu.classList.remove("is-open");
+            toggle.classList.remove("is-open");
+            toggle.setAttribute("aria-expanded", "false");
+        }
+
+    });
+
+});
+</script>
 {% endblock %}
