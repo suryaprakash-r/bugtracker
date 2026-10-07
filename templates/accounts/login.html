@@ -1,61 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Login | BugTracker</title>
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    {% load static %}
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/style.css' %}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'css/accounts.css' %}"
+    >
+
 </head>
 
-<body>
+<body class="auth-page">
 
-    <h1>BugTracker</h1>
+    <div class="auth-layout">
 
-    <h2>Login</h2>
+        <!-- Brand / Welcome Side -->
+        <section class="auth-brand-panel">
 
-    {% if messages %}
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+            <div class="auth-brand-content">
 
-    <form method="post">
-        {% csrf_token %}
+                <div class="auth-brand-logo">
+                    <i class="bi bi-bug-fill"></i>
+                </div>
 
-        <div>
-            <label for="username">
-                Username
-            </label>
+                <div class="auth-brand-name">
+                    BugTracker
+                </div>
 
-            <input
-                type="text"
-                id="username"
-                name="username"
-                required
-            >
-        </div>
+                <h1>
+                    Manage projects.
+                    Track bugs.
+                    Ship better.
+                </h1>
 
-        <br>
+                <p>
+                    A centralized platform for managing projects,
+                    bugs, teams, and development workflows.
+                </p>
 
-        <div>
-            <label for="password">
-                Password
-            </label>
+                <div class="auth-brand-features">
 
-            <input
-                type="password"
-                id="password"
-                name="password"
-                required
-            >
-        </div>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Project management</span>
+                    </div>
 
-        <br>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Bug tracking &amp; assignment</span>
+                    </div>
 
-        <button type="submit">
-            Login
-        </button>
-    </form>
+                    <div>
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Role-based access control</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Login Side -->
+        <main class="auth-form-panel">
+
+            <div class="auth-form-container">
+
+                <div class="auth-mobile-brand">
+
+                    <div class="auth-brand-logo">
+                        <i class="bi bi-bug-fill"></i>
+                    </div>
+
+                    <span>BugTracker</span>
+
+                </div>
+
+
+                <div class="auth-form-header">
+
+                    <span class="auth-eyebrow">
+                        ACCOUNT ACCESS
+                    </span>
+
+                    <h2>
+                        Welcome back
+                    </h2>
+
+                    <p>
+                        Sign in to continue to your BugTracker workspace.
+                    </p>
+
+                </div>
+
+
+                {% if messages %}
+
+                    <div class="auth-messages">
+
+                        {% for message in messages %}
+
+                            <div
+                                class="auth-message
+                                {% if message.tags == 'error' %}
+                                    auth-message-error
+                                {% elif message.tags == 'success' %}
+                                    auth-message-success
+                                {% elif message.tags == 'warning' %}
+                                    auth-message-warning
+                                {% else %}
+                                    auth-message-info
+                                {% endif %}"
+                            >
+
+                                <i
+                                    class="
+                                    {% if message.tags == 'error' %}
+                                        bi bi-exclamation-circle-fill
+                                    {% elif message.tags == 'success' %}
+                                        bi bi-check-circle-fill
+                                    {% elif message.tags == 'warning' %}
+                                        bi bi-exclamation-triangle-fill
+                                    {% else %}
+                                        bi bi-info-circle-fill
+                                    {% endif %}
+                                    "
+                                ></i>
+
+                                <span>{{ message }}</span>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
+                <form
+                    method="post"
+                    class="auth-login-form"
+                >
+
+                    {% csrf_token %}
+
+                    {% if request.GET.next %}
+                        <input
+                            type="hidden"
+                            name="next"
+                            value="{{ request.GET.next }}"
+                        >
+                    {% endif %}
+
+
+                    <!-- Username -->
+                    <div class="auth-field">
+
+                        <label for="username">
+                            Username
+                        </label>
+
+                        <div class="auth-input-wrapper">
+
+                            <i class="bi bi-person"></i>
+
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                autocomplete="username"
+                                placeholder="Enter your username"
+                                required
+                                autofocus
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="auth-field">
+
+                        <div class="auth-field-label-row">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <a
+                                href="{% url 'accounts:password_reset' %}"
+                                class="auth-forgot-link"
+                            >
+                                Forgot password?
+                            </a>
+
+                        </div>
+
+                        <div class="auth-input-wrapper">
+
+                            <i class="bi bi-lock"></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                autocomplete="current-password"
+                                placeholder="Enter your password"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="auth-login-btn"
+                    >
+                        <span>Sign In</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+
+                </form>
+
+
+                <div class="auth-security-note">
+
+                    <i class="bi bi-shield-check"></i>
+
+                    <span>
+                        Your account access is protected by BugTracker's
+                        role-based permissions.
+                    </span>
+
+                </div>
+
+
+                <div class="auth-footer">
+                    Ash &copy; 2026
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
 
 </body>
+
 </html>
