@@ -50,17 +50,7 @@ Profile
         </div>
 
     </div>
-
-    {% if messages %}
-    <div class="profile-messages">
-        {% for message in messages %}
-        <div class="profile-message {{ message.tags }}">
-            <i class="bi bi-check-circle-fill"></i>
-            <span>{{ message }}</span>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+    
 
     <div class="profile-grid">
 
@@ -250,37 +240,37 @@ Profile
 
 {% block extra_js %}
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
 
-    const toggle = document.getElementById("profileActionsToggle");
-    const menu = document.getElementById("profileActionsMenu");
+        const toggle = document.getElementById("profileActionsToggle");
+        const menu = document.getElementById("profileActionsMenu");
 
-    if (!toggle || !menu) {
-        return;
-    }
-
-    toggle.addEventListener("click", function (event) {
-        event.stopPropagation();
-
-        const isOpen = menu.classList.toggle("is-open");
-
-        toggle.classList.toggle("is-open", isOpen);
-        toggle.setAttribute("aria-expanded", String(isOpen));
-    });
-
-    document.addEventListener("click", function (event) {
-
-        if (
-            !menu.contains(event.target) &&
-            !toggle.contains(event.target)
-        ) {
-            menu.classList.remove("is-open");
-            toggle.classList.remove("is-open");
-            toggle.setAttribute("aria-expanded", "false");
+        if (!toggle || !menu) {
+            return;
         }
 
-    });
+        toggle.addEventListener("click", function (event) {
+            event.stopPropagation();
 
-});
+            const isOpen = menu.classList.toggle("is-open");
+
+            toggle.classList.toggle("is-open", isOpen);
+            toggle.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        document.addEventListener("click", function (event) {
+
+            if (
+                !menu.contains(event.target) &&
+                !toggle.contains(event.target)
+            ) {
+                menu.classList.remove("is-open");
+                toggle.classList.remove("is-open");
+                toggle.setAttribute("aria-expanded", "false");
+            }
+
+        });
+
+    });
 </script>
 {% endblock %}

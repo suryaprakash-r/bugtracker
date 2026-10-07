@@ -1,36 +1,19 @@
 {% if messages %}
-
-<div class="messages-container">
-
+<div class="app-messages">
     {% for message in messages %}
+    <div class="app-message {{ message.tags }}" role="alert">
 
-        <div
-            class="alert
-            {% if message.tags == 'error' %}
-                alert-danger
-            {% elif message.tags == 'success' %}
-                alert-success
-            {% elif message.tags == 'warning' %}
-                alert-warning
-            {% else %}
-                alert-info
-            {% endif %}
-            alert-dismissible fade show"
-            role="alert"
-        >
+        <i class="bi bi-check-circle-fill"></i>
 
-            {{ message }}
+        <span>{{ message }}</span>
 
-            <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-            ></button>
+        <button type="button"
+                class="app-message-close"
+                aria-label="Close notification">
+            <i class="bi bi-x"></i>
+        </button>
 
-        </div>
-
+    </div>
     {% endfor %}
-
 </div>
-
 {% endif %}

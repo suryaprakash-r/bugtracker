@@ -40,9 +40,7 @@
 
             <main class="content-area">
 
-                {% if request.resolver_match.url_name != "profile" %}
-                    {% include "base/messages.html" %}
-                {% endif %}
+                {% include "base/messages.html" %}
 
                 {% block content %}
                 {% endblock %}

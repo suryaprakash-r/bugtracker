@@ -863,6 +863,71 @@
     color: #15803d;
 }
 
+.user-action-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+/* =========================================================
+   User Action Buttons
+   ========================================================= */
+
+.user-action-form {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+.user-action-btn {
+    width: 40px;
+    height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #dbe4f0;
+    border-radius: 10px;
+
+    background: #ffffff;
+    color: #2563eb;
+
+    font-size: 15px;
+    line-height: 1;
+
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.user-action-btn:hover {
+    background: #f8fbff;
+    border-color: #cddcf0;
+}
+
+.user-action-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.user-action-delete {
+    color: #dc3545;
+}
+
+.user-action-delete:hover {
+    background: rgba(220, 53, 69, 0.06);
+    border-color: rgba(220, 53, 69, 0.25);
+    color: #dc3545;
+}
+
 @media (max-width: 700px) {
 
     .users-list-header {

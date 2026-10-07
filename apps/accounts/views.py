@@ -11,6 +11,7 @@ from django.contrib.auth import update_session_auth_hash
 
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.db.models.deletion import ProtectedError
 
 from .models import User, Profile
 from .forms import (
@@ -240,7 +241,36 @@ def user_toggle_status(request, user_id):
 
     return redirect("accounts:users")
 
+@login_required
+@role_required(Permission.MANAGE_USERS)
+def user_delete(request, user_id):
+    if request.method != "POST":
+        raise PermissionDenied
 
+    user = get_object_or_404(User, id=user_id)
+
+    if user.id == request.user.id:
+        messages.error(request, "You cannot delete your own account.")
+        return redirect("accounts:users")
+
+    username = user.username
+
+    try:
+        user.delete()
+    except ProtectedError:
+        messages.error(
+            request,
+            f'User "{username}" cannot be deleted because they are still linked '
+            "to protected project or bug records. Deactivate the account instead "
+            "or remove/reassign those records first."
+        )
+    else:
+        messages.success(
+            request,
+            f'User "{username}" was deleted successfully.'
+        )
+
+    return redirect("accounts:users")
 
 @login_required
 def profile_view(request):

@@ -419,6 +419,21 @@ Users
 
                                         {% endif %}
 
+                                        {% if user.id != request.user.id %}
+                                            <form method="post"
+                                                action="{% url 'accounts:user_delete' user.id %}"
+                                                class="user-action-form"
+                                                onsubmit="return confirm('Are you sure you want to permanently delete {{ user.username }}? This action cannot be undone.');">
+                                                {% csrf_token %}
+                                                <button type="submit"
+                                                        class="user-action-btn user-action-delete"
+                                                        title="Delete user"
+                                                        aria-label="Delete user">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
                                     </div>
 
                                 </td>

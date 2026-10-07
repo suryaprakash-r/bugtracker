@@ -105,3 +105,18 @@ document.addEventListener("DOMContentLoaded", function () {
     );
 
 });
+
+
+document.addEventListener("click", function (event) {
+    const closeButton = event.target.closest(".app-message-close");
+
+    if (!closeButton) {
+        return;
+    }
+
+    const message = closeButton.closest(".app-message");
+
+    if (message) {
+        message.remove();
+    }
+});

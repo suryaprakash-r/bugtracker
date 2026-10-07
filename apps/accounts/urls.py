@@ -74,7 +74,11 @@ urlpatterns = [
         name="user_toggle_status",
     ),
     
-    
+    path(
+        "users/<int:user_id>/delete/", 
+        views.user_delete, 
+        name="user_delete"
+    ),
 
     path(
         "logout/",
