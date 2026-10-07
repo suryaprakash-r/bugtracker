@@ -12,4 +12,9 @@ urlpatterns = [
         views.report_index,
         name="index",
     ),
+    path(
+        "export/<str:export_format>/",
+        views.report_export,
+        name="export",
+    ),
 ]

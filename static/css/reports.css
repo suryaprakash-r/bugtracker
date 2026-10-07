@@ -890,7 +890,211 @@
     color: var(--text-primary, #374151);
     font-weight: 700;
 }
+/* =========================================================
+   Report Export Menu
+   ========================================================= */
 
+.reports-header-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.report-export-menu {
+    position: relative;
+}
+
+.report-export-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 42px;
+    padding: 0.65rem 0.9rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 0.65rem;
+    background: var(--surface-primary, #ffffff);
+    color: var(--text-primary, #374151);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.report-export-trigger:hover,
+.report-export-menu.is-open .report-export-trigger {
+    border-color: #3b82f6;
+    background: var(--surface-soft, #f8fafc);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.10);
+}
+
+.report-export-chevron {
+    margin-left: 0.1rem;
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+}
+
+.report-export-menu.is-open .report-export-chevron {
+    transform: rotate(180deg);
+}
+
+.report-export-dropdown {
+    position: absolute;
+    top: calc(100% + 0.55rem);
+    right: 0;
+    z-index: 20;
+    width: 245px;
+    padding: 0.45rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 0.75rem;
+    background: var(--surface-primary, #ffffff);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-5px);
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        visibility 0.18s ease;
+}
+
+.report-export-menu.is-open .report-export-dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.report-export-form {
+    margin: 0;
+}
+
+.report-export-option {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem;
+    border: 0;
+    border-radius: 0.55rem;
+    background: transparent;
+    color: var(--text-primary, #374151);
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.18s ease;
+}
+
+.report-export-option:hover {
+    background: var(--surface-soft, #f8fafc);
+}
+
+.report-export-option > i {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.55rem;
+    background: rgba(59, 130, 246, 0.10);
+    color: #2563eb;
+    font-size: 0.9rem;
+}
+
+.report-export-option span {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.report-export-option strong {
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.report-export-option small {
+    margin-top: 0.15rem;
+    font-size: 0.68rem;
+    color: var(--text-muted, #6b7280);
+}
+
+/* =========================================================
+   Reports Header + Export Responsive Alignment
+   ========================================================= */
+
+.reports-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.reports-header > div:first-child {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.reports-header-actions {
+    flex: 0 0 auto;
+    margin-left: auto;
+    padding-top: 0.1rem;
+}
+
+.report-export-menu {
+    position: relative;
+}
+
+.report-export-dropdown {
+    top: calc(100% + 0.55rem);
+    right: 0;
+    left: auto;
+    width: 245px;
+}
+
+@media (max-width: 900px) {
+
+    .reports-header {
+        gap: 1rem;
+    }
+
+    .reports-header-actions {
+        padding-top: 0;
+    }
+
+}
+
+@media (max-width: 576px) {
+
+    .reports-header {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .reports-header-actions {
+        width: 50%;
+        margin:auto;
+    }
+
+    .report-export-menu {
+        width: 100%;
+    }
+
+    .report-export-trigger {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .report-export-dropdown {
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+}
 @media (max-width: 900px) {
 
     .report-filter-fields {

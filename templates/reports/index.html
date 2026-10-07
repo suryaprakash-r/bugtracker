@@ -31,6 +31,67 @@ Reports
             Detailed bug reporting and analytics for your accessible projects.
         </p>
 
+        <div class="reports-header-actions">
+
+            <div class="report-export-menu">
+
+                <button type="button" class="report-export-trigger" id="report-export-trigger">
+                    <i class="bi bi-download"></i>
+                    <span>Export</span>
+                    <i class="bi bi-chevron-down report-export-chevron"></i>
+                </button>
+
+                <div class="report-export-dropdown" id="report-export-dropdown">
+
+                    <form method="get" action="{% url 'reports:export' 'csv' %}" class="report-export-form">
+
+                        {% if start_date %}
+                        <input type="hidden" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                        {% endif %}
+
+                        {% if end_date %}
+                        <input type="hidden" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+                        {% endif %}
+
+                        <button type="submit" class="report-export-option">
+                            <i class="bi bi-filetype-csv"></i>
+
+                            <span>
+                                <strong>Export CSV</strong>
+                                <small>Spreadsheet-friendly report</small>
+                            </span>
+                        </button>
+
+                    </form>
+
+
+                    <form method="get" action="{% url 'reports:export' 'pdf' %}" class="report-export-form">
+
+                        {% if start_date %}
+                        <input type="hidden" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+                        {% endif %}
+
+                        {% if end_date %}
+                        <input type="hidden" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+                        {% endif %}
+
+                        <button type="submit" class="report-export-option">
+                            <i class="bi bi-filetype-pdf"></i>
+
+                            <span>
+                                <strong>Export PDF</strong>
+                                <small>Printable report document</small>
+                            </span>
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
     <!-- =====================================================
@@ -1529,6 +1590,23 @@ Reports
             }
 
         });
+
+        const exportMenu = document.querySelector(".report-export-menu");
+        const exportTrigger = document.getElementById("report-export-trigger");
+
+        if (exportMenu && exportTrigger) {
+
+            exportTrigger.addEventListener("click", function (event) {
+                event.stopPropagation();
+
+                exportMenu.classList.toggle("is-open");
+            });
+
+            document.addEventListener("click", function () {
+                exportMenu.classList.remove("is-open");
+            });
+
+        }
 
     });
 </script>
