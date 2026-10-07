@@ -8,6 +8,26 @@ from apps.projects.models import Project
 
 User = get_user_model()
 
+def _apply_report_date_range(queryset, start_date=None, end_date=None):
+    """
+    Apply an inclusive created-date range to a bug queryset.
+
+    Both boundaries are optional. When neither is provided,
+    the original queryset is returned unchanged.
+    """
+
+    if start_date:
+        queryset = queryset.filter(
+            created_at__date__gte=start_date
+        )
+
+    if end_date:
+        queryset = queryset.filter(
+            created_at__date__lte=end_date
+        )
+
+    return queryset
+
 def get_visible_report_projects(user):
     """
     Return the projects visible to the authenticated user
@@ -37,12 +57,15 @@ def get_visible_report_projects(user):
     return Project.objects.none()
 
 
-def get_visible_report_bugs(user):
+def get_visible_report_bugs(user, start_date=None, end_date=None):
     """
     Return the bugs visible to the authenticated user
     for reporting purposes.
 
     Reporting visibility follows the existing BugTracker RBAC.
+
+    Optional start_date and end_date values filter bugs by
+    their created date using inclusive boundaries.
     """
 
     if not user or not user.is_authenticated:
@@ -52,14 +75,14 @@ def get_visible_report_bugs(user):
         return Bug.objects.none()
 
     if user.is_superuser or user.role == "ADMIN":
-        return Bug.objects.select_related(
+        bugs = Bug.objects.select_related(
             "project",
             "reporter",
             "assigned_to",
         ).order_by("-created_at")
 
-    if user.role == "PROJECT_MANAGER":
-        return Bug.objects.filter(
+    elif user.role == "PROJECT_MANAGER":
+        bugs = Bug.objects.filter(
             project__manager=user
         ).select_related(
             "project",
@@ -67,7 +90,14 @@ def get_visible_report_bugs(user):
             "assigned_to",
         ).order_by("-created_at")
 
-    return Bug.objects.none()
+    else:
+        return Bug.objects.none()
+
+    return _apply_report_date_range(
+        bugs,
+        start_date=start_date,
+        end_date=end_date,
+    )
 
 
 def _get_distribution(queryset, field_name, choices):
@@ -187,7 +217,7 @@ def get_bug_summary_report(bugs):
         "severity_counts": severity_counts,
     }
     
-def get_project_report(user):
+def get_project_report(user, bugs=None):
     """
     Return project-level reporting data for the user's
     report-visible projects.
@@ -197,27 +227,33 @@ def get_project_report(user):
     """
 
     projects = get_visible_report_projects(user)
+    
+    if bugs is None:
+        bugs = get_visible_report_bugs(user)
 
     return projects.annotate(
         total_bugs=Count(
             "bugs",
+            filter=Q(bugs__in=bugs),
             distinct=True,
         ),
         open_bugs=Count(
             "bugs",
             filter=Q(
+                bugs__in=bugs,
                 bugs__status__in=[
                     Bug.Status.NEW,
                     Bug.Status.ASSIGNED,
                     Bug.Status.IN_PROGRESS,
                     Bug.Status.REOPENED,
-                ]
+                ],
             ),
             distinct=True,
         ),
         resolved_bugs=Count(
             "bugs",
             filter=Q(
+                bugs__in=bugs,
                 bugs__status=Bug.Status.RESOLVED,
             ),
             distinct=True,
@@ -225,6 +261,7 @@ def get_project_report(user):
         testing_bugs=Count(
             "bugs",
             filter=Q(
+                bugs__in=bugs,
                 bugs__status=Bug.Status.TESTING,
             ),
             distinct=True,
@@ -232,6 +269,7 @@ def get_project_report(user):
         closed_bugs=Count(
             "bugs",
             filter=Q(
+                bugs__in=bugs,
                 bugs__status=Bug.Status.CLOSED,
             ),
             distinct=True,
@@ -239,6 +277,7 @@ def get_project_report(user):
         reopened_bugs=Count(
             "bugs",
             filter=Q(
+                bugs__in=bugs,
                 bugs__status=Bug.Status.REOPENED,
             ),
             distinct=True,
@@ -246,6 +285,7 @@ def get_project_report(user):
         critical_bugs=Count(
             "bugs",
             filter=Q(
+                bugs__in=bugs,
                 bugs__severity=Bug.Severity.CRITICAL,
             ),
             distinct=True,
@@ -256,7 +296,7 @@ def get_project_report(user):
     )
     
     
-def get_developer_workload_report(user):
+def get_developer_workload_report(user, bugs=None):
     """
     Return developer workload metrics for developers who are
     active members of the user's report-visible projects.
@@ -269,6 +309,9 @@ def get_developer_workload_report(user):
 
     if not projects.exists():
         return User.objects.none()
+    
+    if bugs is None:
+        bugs = get_visible_report_bugs(user)
 
     return (
         User.objects.filter(
@@ -282,6 +325,7 @@ def get_developer_workload_report(user):
             total_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                 ),
                 distinct=True,
@@ -289,6 +333,7 @@ def get_developer_workload_report(user):
             open_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status__in=[
                         Bug.Status.NEW,
@@ -302,6 +347,7 @@ def get_developer_workload_report(user):
             resolved_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status=Bug.Status.RESOLVED,
                 ),
@@ -310,6 +356,7 @@ def get_developer_workload_report(user):
             testing_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status=Bug.Status.TESTING,
                 ),
@@ -318,6 +365,7 @@ def get_developer_workload_report(user):
             closed_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status=Bug.Status.CLOSED,
                 ),
@@ -326,6 +374,7 @@ def get_developer_workload_report(user):
             reopened_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status=Bug.Status.REOPENED,
                 ),
@@ -334,6 +383,7 @@ def get_developer_workload_report(user):
             critical_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__severity=Bug.Severity.CRITICAL,
                 ),
@@ -347,7 +397,7 @@ def get_developer_workload_report(user):
         )
     )
     
-def get_tester_qa_report(user):
+def get_tester_qa_report(user, bugs=None):
     """
     Return tester / QA workload metrics for testers who are
     active members of the user's report-visible projects.
@@ -360,7 +410,10 @@ def get_tester_qa_report(user):
 
     if not projects.exists():
         return User.objects.none()
-
+    
+    if bugs is None:
+        bugs = get_visible_report_bugs(user)
+        
     return (
         User.objects.filter(
             role=User.Role.TESTER,
@@ -373,6 +426,7 @@ def get_tester_qa_report(user):
             total_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                 ),
                 distinct=True,
@@ -380,6 +434,7 @@ def get_tester_qa_report(user):
             open_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status__in=[
                         Bug.Status.NEW,
@@ -393,6 +448,7 @@ def get_tester_qa_report(user):
             resolved_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status=Bug.Status.RESOLVED,
                 ),
@@ -401,6 +457,7 @@ def get_tester_qa_report(user):
             testing_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status=Bug.Status.TESTING,
                 ),
@@ -409,6 +466,7 @@ def get_tester_qa_report(user):
             closed_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status=Bug.Status.CLOSED,
                 ),
@@ -417,6 +475,7 @@ def get_tester_qa_report(user):
             reopened_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__status=Bug.Status.REOPENED,
                 ),
@@ -425,6 +484,7 @@ def get_tester_qa_report(user):
             critical_bugs=Count(
                 "assigned_bugs",
                 filter=Q(
+                    assigned_bugs__in=bugs,
                     assigned_bugs__project__in=projects,
                     assigned_bugs__severity=Bug.Severity.CRITICAL,
                 ),

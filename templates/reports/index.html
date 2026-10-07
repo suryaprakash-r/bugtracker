@@ -33,6 +33,132 @@ Reports
 
     </div>
 
+    <!-- =====================================================
+         Date Range Filter
+         ===================================================== -->
+
+    <div class="dashboard-card report-filter-card mb-4">
+
+        <div class="report-filter-header">
+
+            <div class="report-filter-heading">
+
+                <div class="report-filter-icon">
+                    <i class="bi bi-calendar3"></i>
+                </div>
+
+                <div>
+
+                    <h3 class="report-filter-title">
+                        Report Date Range
+                    </h3>
+
+                    <p class="report-filter-subtitle">
+                        Filter reporting data by bug creation date
+                    </p>
+
+                </div>
+
+            </div>
+
+            {% if start_date or end_date %}
+
+            <span class="report-filter-active">
+                <i class="bi bi-funnel-fill"></i>
+                Filter Active
+            </span>
+
+            {% endif %}
+
+        </div>
+
+
+        <form method="get" action="{% url 'reports:index' %}" class="report-filter-form">
+
+            <div class="report-filter-fields">
+
+                <div class="report-filter-field">
+
+                    <label for="report-start-date">
+                        Start Date
+                    </label>
+
+                    <div class="report-filter-input-wrapper">
+
+                        <i class="bi bi-calendar-event"></i>
+
+                        <input type="date" id="report-start-date" name="start_date"
+                            value="{{ start_date|date:'Y-m-d' }}">
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-filter-field">
+
+                    <label for="report-end-date">
+                        End Date
+                    </label>
+
+                    <div class="report-filter-input-wrapper">
+
+                        <i class="bi bi-calendar-event"></i>
+
+                        <input type="date" id="report-end-date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-filter-actions">
+
+                    <button type="submit" class="report-filter-btn report-filter-btn-primary">
+                        <i class="bi bi-funnel-fill"></i>
+                        Apply Filter
+                    </button>
+
+                    <a href="{% url 'reports:index' %}" class="report-filter-btn report-filter-btn-secondary">
+                        <i class="bi bi-x-circle"></i>
+                        Clear
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            {% if start_date or end_date %}
+
+            <div class="report-filter-summary">
+
+                <i class="bi bi-info-circle-fill"></i>
+
+                <span>
+
+                    Showing report data
+
+                    {% if start_date and end_date %}
+                    from <strong>{{ start_date|date:"d M Y" }}</strong>
+                    to <strong>{{ end_date|date:"d M Y" }}</strong>
+                    {% elif start_date %}
+                    from <strong>{{ start_date|date:"d M Y" }}</strong>
+                    onward
+                    {% elif end_date %}
+                    up to <strong>{{ end_date|date:"d M Y" }}</strong>
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
 
     <!-- =====================================================
          Bug Summary
