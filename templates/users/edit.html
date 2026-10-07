@@ -1,0 +1,401 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}
+Edit User | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Edit User
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/users.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="users-page">
+
+    <div class="users-header users-create-header">
+
+        <div>
+            <h1>Edit User</h1>
+
+            <p>
+                Update account and profile information for
+                <strong>{{ user_account.username }}</strong>.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'accounts:users' %}"
+            class="users-back-btn"
+        >
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Users</span>
+        </a>
+
+    </div>
+
+
+    <div class="users-create-grid">
+
+        <!-- Edit Form -->
+
+        <div class="users-card users-create-form-card">
+
+            <div class="users-card-header">
+
+                <div>
+                    <h2>User Information</h2>
+
+                    <p>
+                        Update the selected user's account and profile details.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form
+                method="post"
+                class="users-create-form"
+            >
+
+                {% csrf_token %}
+
+
+                {% if form.non_field_errors %}
+
+                    <div class="users-form-error">
+
+                        {% for error in form.non_field_errors %}
+
+                            <div>
+                                <i class="bi bi-exclamation-circle"></i>
+                                <span>{{ error }}</span>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Account Details -->
+
+                <div class="users-form-section">
+
+                    <div class="users-form-section-title">
+                        <i class="bi bi-person-badge"></i>
+                        Account Details
+                    </div>
+
+
+                    <div class="users-form-grid">
+
+                        <div class="users-form-field">
+
+                            <label>
+                                Username
+                            </label>
+
+                            <input
+                                type="text"
+                                value="{{ user_account.username }}"
+                                disabled
+                            >
+
+                            <small class="users-field-help">
+                                Username cannot be changed.
+                            </small>
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.email.id_for_label }}">
+                                Email
+                            </label>
+
+                            {{ form.email }}
+
+                            {% for error in form.email.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.first_name.id_for_label }}">
+                                First Name
+                            </label>
+
+                            {{ form.first_name }}
+
+                            {% for error in form.first_name.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.last_name.id_for_label }}">
+                                Last Name
+                            </label>
+
+                            {{ form.last_name }}
+
+                            {% for error in form.last_name.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.role.id_for_label }}">
+                                Role
+                            </label>
+
+                            {{ form.role }}
+
+                            {% for error in form.role.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Profile Information -->
+
+                <div class="users-form-section">
+
+                    <div class="users-form-section-title">
+                        <i class="bi bi-briefcase"></i>
+                        Profile Information
+                    </div>
+
+
+                    <div class="users-form-grid">
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.phone.id_for_label }}">
+                                Phone
+                            </label>
+
+                            {{ form.phone }}
+
+                            {% for error in form.phone.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.designation.id_for_label }}">
+                                Designation
+                            </label>
+
+                            {{ form.designation }}
+
+                            {% for error in form.designation.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.department.id_for_label }}">
+                                Department
+                            </label>
+
+                            {{ form.department }}
+
+                            {% for error in form.department.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field users-form-field-full">
+
+                            <label for="{{ form.bio.id_for_label }}">
+                                Bio
+                            </label>
+
+                            {{ form.bio }}
+
+                            {% for error in form.bio.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="users-create-actions">
+
+                    <button
+                        type="submit"
+                        class="users-create-submit"
+                    >
+                        <i class="bi bi-check2-circle"></i>
+                        <span>Save Changes</span>
+                    </button>
+
+                    <a
+                        href="{% url 'accounts:users' %}"
+                        class="users-create-cancel"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- User Summary -->
+
+        <div class="users-card users-create-info-card">
+
+            <div class="users-card-header">
+
+                <div>
+                    <h2>User Summary</h2>
+
+                    <p>
+                        Current account information.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="users-create-info-content">
+
+                <div class="users-info-item">
+
+                    <div class="users-info-icon">
+                        <i class="bi bi-person"></i>
+                    </div>
+
+                    <div>
+                        <strong>Username</strong>
+
+                        <span>
+                            {{ user_account.username }}
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="users-info-item">
+
+                    <div class="users-info-icon">
+                        <i class="bi bi-shield"></i>
+                    </div>
+
+                    <div>
+                        <strong>Current Role</strong>
+
+                        <span>
+                            {{ user_account.get_role_display }}
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="users-info-item">
+
+                    <div class="users-info-icon">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+
+                    <div>
+                        <strong>Account Status</strong>
+
+                        <span>
+                            {% if user_account.is_active %}
+                                Active
+                            {% else %}
+                                Inactive
+                            {% endif %}
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="users-info-item">
+
+                    <div class="users-info-icon">
+                        <i class="bi bi-calendar3"></i>
+                    </div>
+
+                    <div>
+                        <strong>Joined</strong>
+
+                        <span>
+                            {{ user_account.date_joined|date:"d M Y" }}
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

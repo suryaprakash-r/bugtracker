@@ -1,0 +1,546 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}
+Users | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Users
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/users.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="users-page">
+
+    <!-- Header -->
+    <div class="users-header users-list-header">
+
+        <div>
+            <h1>Users</h1>
+            <p>
+                Manage BugTracker users and their account status.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'accounts:user_create' %}"
+            class="users-add-btn"
+        >
+            <i class="bi bi-person-plus-fill"></i>
+            <span>Add User</span>
+        </a>
+
+    </div>
+
+
+    <!-- Statistics -->
+    <div class="users-stat-grid">
+
+        <div class="users-stat-card">
+            <div class="users-stat-icon users-stat-icon-total">
+                <i class="bi bi-people-fill"></i>
+            </div>
+
+            <div>
+                <span>Total Users</span>
+                <strong>{{ total_users }}</strong>
+            </div>
+        </div>
+
+
+        <div class="users-stat-card">
+            <div class="users-stat-icon users-stat-icon-active">
+                <i class="bi bi-person-check-fill"></i>
+            </div>
+
+            <div>
+                <span>Active Users</span>
+                <strong>{{ active_users }}</strong>
+            </div>
+        </div>
+
+
+        <div class="users-stat-card">
+            <div class="users-stat-icon users-stat-icon-inactive">
+                <i class="bi bi-person-x-fill"></i>
+            </div>
+
+            <div>
+                <span>Inactive Users</span>
+                <strong>{{ inactive_users }}</strong>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="users-filter-card">
+
+        <form
+            method="get"
+            class="users-filter-form"
+        >
+
+            <div class="users-search">
+
+                <label for="user-search">
+                    Search
+                </label>
+
+                <div class="users-input-wrapper">
+                    <i class="bi bi-search"></i>
+
+                    <input
+                        type="search"
+                        id="user-search"
+                        name="q"
+                        value="{{ search_query }}"
+                        placeholder="Search username, name or email..."
+                    >
+                </div>
+
+            </div>
+
+
+            <div class="users-filter-field">
+
+                <label for="role-filter">
+                    Role
+                </label>
+
+                <select
+                    id="role-filter"
+                    name="role"
+                >
+                    <option value="">
+                        All Roles
+                    </option>
+
+                    <option
+                        value="ADMIN"
+                        {% if role_filter == "ADMIN" %}selected{% endif %}
+                    >
+                        Admin
+                    </option>
+
+                    <option
+                        value="PROJECT_MANAGER"
+                        {% if role_filter == "PROJECT_MANAGER" %}selected{% endif %}
+                    >
+                        Project Manager
+                    </option>
+
+                    <option
+                        value="DEVELOPER"
+                        {% if role_filter == "DEVELOPER" %}selected{% endif %}
+                    >
+                        Developer
+                    </option>
+
+                    <option
+                        value="TESTER"
+                        {% if role_filter == "TESTER" %}selected{% endif %}
+                    >
+                        Tester
+                    </option>
+                </select>
+
+            </div>
+
+
+            <div class="users-filter-field">
+
+                <label for="status-filter">
+                    Status
+                </label>
+
+                <select
+                    id="status-filter"
+                    name="status"
+                >
+                    <option value="">
+                        All Status
+                    </option>
+
+                    <option
+                        value="active"
+                        {% if status_filter == "active" %}selected{% endif %}
+                    >
+                        Active
+                    </option>
+
+                    <option
+                        value="inactive"
+                        {% if status_filter == "inactive" %}selected{% endif %}
+                    >
+                        Inactive
+                    </option>
+                </select>
+
+            </div>
+
+
+            <div class="users-filter-actions">
+
+                <button
+                    type="submit"
+                    class="users-filter-btn"
+                >
+                    <i class="bi bi-funnel"></i>
+                    Apply
+                </button>
+
+                <a
+                    href="{% url 'accounts:users' %}"
+                    class="users-clear-btn"
+                >
+                    Clear
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- User Table -->
+    <div class="users-card">
+
+        <div class="users-card-header">
+
+            <div>
+                <h2>User Directory</h2>
+                <p>
+                    Manage and review BugTracker accounts.
+                </p>
+            </div>
+
+            {% if user_page.paginator.count %}
+                <span class="users-count-badge">
+                    {{ user_page.paginator.count }} users
+                </span>
+            {% endif %}
+
+        </div>
+
+
+        {% if user_page %}
+
+            <div class="users-table-wrapper">
+
+                <table class="users-table">
+
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Department</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for user in user_page %}
+
+                            <tr>
+
+                                <td>
+                                    <div class="users-user-cell">
+
+                                        {% if user.profile.profile_image %}
+
+                                            <img
+                                                src="{{ user.profile.profile_image.url }}"
+                                                alt="{{ user.username }}"
+                                                class="users-avatar"
+                                            >
+
+                                        {% else %}
+
+                                            <div class="users-avatar users-avatar-placeholder">
+                                                {{ user.username|first|upper }}
+                                            </div>
+
+                                        {% endif %}
+
+                                        <div class="users-user-info">
+
+                                            <strong>
+                                                {{ user.username }}
+                                            </strong>
+
+                                            <span>
+                                                {% if user.get_full_name %}
+                                                    {{ user.get_full_name }}
+                                                {% else %}
+                                                    No name provided
+                                                {% endif %}
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+                                </td>
+
+
+                                <td>
+                                    <span class="users-email">
+                                        {{ user.email|default:"Not provided" }}
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    {% if user.role == "ADMIN" %}
+
+                                        <span class="users-role-badge users-role-admin">
+                                            Admin
+                                        </span>
+
+                                    {% elif user.role == "PROJECT_MANAGER" %}
+
+                                        <span class="users-role-badge users-role-manager">
+                                            Project Manager
+                                        </span>
+
+                                    {% elif user.role == "DEVELOPER" %}
+
+                                        <span class="users-role-badge users-role-developer">
+                                            Developer
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="users-role-badge users-role-tester">
+                                            Tester
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+                                    {{ user.profile.department|default:"Not provided" }}
+                                </td>
+
+
+                                <td>
+
+                                    {% if user.is_active %}
+
+                                        <span class="users-status users-status-active">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            Active
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="users-status users-status-inactive">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            Inactive
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+                                    <span class="users-date">
+                                        {{ user.date_joined|date:"d M Y" }}
+                                    </span>
+                                </td>
+
+                                <td>
+
+                                    <div class="users-action-group">
+
+                                        <a
+                                            href="{% url 'accounts:user_edit' user.id %}"
+                                            class="users-action-btn"
+                                            title="Edit user"
+                                        >
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+
+
+                                        {% if user.id != request.user.id %}
+
+                                            <form
+                                                method="post"
+                                                action="{% url 'accounts:user_toggle_status' user.id %}"
+                                                class="users-status-form"
+                                                onsubmit="return confirm(
+                                                    '{% if user.is_active %}Deactivate{% else %}Activate{% endif %} {{ user.username }}?'
+                                                );"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                {% if user.is_active %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="users-action-btn users-action-deactivate"
+                                                        title="Deactivate user"
+                                                    >
+                                                        <i class="bi bi-person-dash"></i>
+                                                    </button>
+
+                                                {% else %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="users-action-btn users-action-activate"
+                                                        title="Activate user"
+                                                    >
+                                                        <i class="bi bi-person-check"></i>
+                                                    </button>
+
+                                                {% endif %}
+
+                                            </form>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+                                <td
+                                    colspan="7"
+                                    class="users-empty"
+                                >
+                                    <i class="bi bi-people"></i>
+                                    <strong>No users found</strong>
+                                    <span>
+                                        Try changing your search or filters.
+                                    </span>
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% if user_page.has_other_pages %}
+
+                <div class="users-pagination">
+
+                    <div class="users-pagination-info">
+
+                        Showing
+                        <strong>
+                            {{ user_page.start_index }}
+                        </strong>
+                        –
+                        <strong>
+                            {{ user_page.end_index }}
+                        </strong>
+                        of
+                        <strong>
+                            {{ user_page.paginator.count }}
+                        </strong>
+                        users
+
+                    </div>
+
+
+                    <div class="users-pagination-controls">
+
+                        {% if user_page.has_previous %}
+
+                            <a
+                                href="?page={{ user_page.previous_page_number }}&q={{ search_query|urlencode }}&role={{ role_filter|urlencode }}&status={{ status_filter|urlencode }}"
+                                class="users-pagination-btn"
+                            >
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+
+                        {% else %}
+
+                            <span class="users-pagination-btn disabled">
+                                <i class="bi bi-chevron-left"></i>
+                            </span>
+
+                        {% endif %}
+
+
+                        {% for number in user_page.paginator.page_range %}
+
+                            {% if number == user_page.number %}
+
+                                <span class="users-pagination-btn active">
+                                    {{ number }}
+                                </span>
+
+                            {% elif number <= 3 %}
+
+                                <a
+                                    href="?page={{ number }}&q={{ search_query|urlencode }}&role={{ role_filter|urlencode }}&status={{ status_filter|urlencode }}"
+                                    class="users-pagination-btn"
+                                >
+                                    {{ number }}
+                                </a>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                        {% if user_page.has_next %}
+
+                            <a
+                                href="?page={{ user_page.next_page_number }}&q={{ search_query|urlencode }}&role={{ role_filter|urlencode }}&status={{ status_filter|urlencode }}"
+                                class="users-pagination-btn"
+                            >
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+
+                        {% else %}
+
+                            <span class="users-pagination-btn disabled">
+                                <i class="bi bi-chevron-right"></i>
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

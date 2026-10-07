@@ -49,6 +49,32 @@ urlpatterns = [
         ),
         name="password_reset_complete",
     ),
+    
+    path(
+        "users/",
+        views.users_view,
+        name="users",
+    ),
+    
+    path(
+        "users/create/",
+        views.user_create,
+        name="user_create",
+    ),
+    
+    path(
+        "users/<int:user_id>/edit/",
+        views.user_edit,
+        name="user_edit",
+    ),
+    
+    path(
+        "users/<int:user_id>/toggle-status/",
+        views.user_toggle_status,
+        name="user_toggle_status",
+    ),
+    
+    
 
     path(
         "logout/",

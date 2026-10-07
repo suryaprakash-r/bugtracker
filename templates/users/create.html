@@ -1,0 +1,446 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}
+Add User | BugTracker
+{% endblock %}
+
+{% block navbar_title %}
+Add User
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/users.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="users-page">
+
+    <div class="users-header users-create-header">
+
+        <div>
+            <h1>Add User</h1>
+
+            <p>
+                Create a new BugTracker user account.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'accounts:users' %}"
+            class="users-back-btn"
+        >
+            <i class="bi bi-arrow-left"></i>
+            <span>Back to Users</span>
+        </a>
+
+    </div>
+
+
+    <div class="users-create-grid">
+
+        <!-- Form -->
+        <div class="users-card users-create-form-card">
+
+            <div class="users-card-header">
+
+                <div>
+                    <h2>User Information</h2>
+
+                    <p>
+                        Enter the new user's account and profile details.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form
+                method="post"
+                class="users-create-form"
+            >
+
+                {% csrf_token %}
+
+
+                {% if form.non_field_errors %}
+
+                    <div class="users-form-error">
+
+                        {% for error in form.non_field_errors %}
+
+                            <div>
+                                <i class="bi bi-exclamation-circle"></i>
+                                <span>{{ error }}</span>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Account Details -->
+
+                <div class="users-form-section">
+
+                    <div class="users-form-section-title">
+                        <i class="bi bi-person-badge"></i>
+                        Account Details
+                    </div>
+
+
+                    <div class="users-form-grid">
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.username.id_for_label }}">
+                                Username
+                            </label>
+
+                            {{ form.username }}
+
+                            {% for error in form.username.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.email.id_for_label }}">
+                                Email
+                            </label>
+
+                            {{ form.email }}
+
+                            {% for error in form.email.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.first_name.id_for_label }}">
+                                First Name
+                            </label>
+
+                            {{ form.first_name }}
+
+                            {% for error in form.first_name.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.last_name.id_for_label }}">
+                                Last Name
+                            </label>
+
+                            {{ form.last_name }}
+
+                            {% for error in form.last_name.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.role.id_for_label }}">
+                                Role
+                            </label>
+
+                            {{ form.role }}
+
+                            {% for error in form.role.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Password -->
+
+                <div class="users-form-section">
+
+                    <div class="users-form-section-title">
+                        <i class="bi bi-shield-lock"></i>
+                        Account Password
+                    </div>
+
+
+                    <div class="users-form-grid users-form-grid-two">
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.password1.id_for_label }}">
+                                Password
+                            </label>
+
+                            {{ form.password1 }}
+
+                            {% for error in form.password1.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.password2.id_for_label }}">
+                                Confirm Password
+                            </label>
+
+                            {{ form.password2 }}
+
+                            {% for error in form.password2.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Profile -->
+
+                <div class="users-form-section">
+
+                    <div class="users-form-section-title">
+                        <i class="bi bi-briefcase"></i>
+                        Profile Information
+                    </div>
+
+
+                    <div class="users-form-grid">
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.phone.id_for_label }}">
+                                Phone
+                            </label>
+
+                            {{ form.phone }}
+
+                            {% for error in form.phone.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.designation.id_for_label }}">
+                                Designation
+                            </label>
+
+                            {{ form.designation }}
+
+                            {% for error in form.designation.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field">
+
+                            <label for="{{ form.department.id_for_label }}">
+                                Department
+                            </label>
+
+                            {{ form.department }}
+
+                            {% for error in form.department.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+
+                        <div class="users-form-field users-form-field-full">
+
+                            <label for="{{ form.bio.id_for_label }}">
+                                Bio
+                            </label>
+
+                            {{ form.bio }}
+
+                            {% for error in form.bio.errors %}
+                                <span class="users-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Actions -->
+
+                <div class="users-create-actions">
+
+                    <button
+                        type="submit"
+                        class="users-create-submit"
+                    >
+                        <i class="bi bi-person-plus-fill"></i>
+                        <span>Create User</span>
+                    </button>
+
+                    <a
+                        href="{% url 'accounts:users' %}"
+                        class="users-create-cancel"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- Information Card -->
+
+        <div class="users-card users-create-info-card">
+
+            <div class="users-card-header">
+
+                <div>
+                    <h2>Account Setup</h2>
+
+                    <p>
+                        What happens when you create the account.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="users-create-info-content">
+
+                <div class="users-info-item">
+
+                    <div class="users-info-icon">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+
+                    <div>
+                        <strong>Active Account</strong>
+
+                        <span>
+                            The new account will be active immediately.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="users-info-item">
+
+                    <div class="users-info-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+
+                    <div>
+                        <strong>Role Based Access</strong>
+
+                        <span>
+                            Permissions are automatically determined
+                            by the selected role.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="users-info-item">
+
+                    <div class="users-info-icon">
+                        <i class="bi bi-person-vcard"></i>
+                    </div>
+
+                    <div>
+                        <strong>Profile Created</strong>
+
+                        <span>
+                            A profile record is created along with
+                            the user account.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="users-info-item">
+
+                    <div class="users-info-icon">
+                        <i class="bi bi-lock"></i>
+                    </div>
+
+                    <div>
+                        <strong>Password Protected</strong>
+
+                        <span>
+                            Django's password validation and hashing
+                            are used for the new account.
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

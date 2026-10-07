@@ -63,7 +63,15 @@
         <!-- Users -->
         {% if request.user|has_permission:"manage_users" %}
 
-        <a href="#" class="sidebar-link">
+        <a
+            href="{% url 'accounts:users' %}"
+            class="sidebar-link
+                {% if request.resolver_match.url_name == 'users' %}
+                    active
+                {% elif request.resolver_match.url_name == 'user_create' %}
+                    active
+                {% endif %}"
+        >
             <i class="bi bi-people-fill"></i>
             <span>Users</span>
         </a>
@@ -99,20 +107,27 @@
 
 
         <!-- Profile -->
-        <a href="{% url 'accounts:profile' %}" class="sidebar-link
-            {% if request.resolver_match.app_name == 'accounts' %}
-                active
-            {% endif %}">
+        <a
+            href="{% url 'accounts:profile' %}"
+            class="sidebar-link
+                {% if request.resolver_match.url_name == 'profile' %}
+                    active
+                {% elif request.resolver_match.url_name == 'profile_edit' %}
+                    active
+                {% elif request.resolver_match.url_name == 'password_change' %}
+                    active
+                {% endif %}"
+        >
             <i class="bi bi-person-circle"></i>
             <span>Profile</span>
         </a>
 
 
         <!-- Settings -->
-        <a href="#" class="sidebar-link">
+        <!-- <a href="#" class="sidebar-link">
             <i class="bi bi-gear-fill"></i>
             <span>Settings</span>
-        </a>
+        </a> -->
 
     </nav>
 
