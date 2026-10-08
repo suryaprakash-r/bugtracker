@@ -452,9 +452,11 @@ LinkedIn: `https://www.linkedin.com/in/suryaprakash-r/`
 
 ---
 
-## License
+## 📄 License
 
-Add your preferred license here before public distribution, such as MIT, Apache-2.0, or an institution/company-specific license.
+This project is licensed under the [MIT License](LICENSE).
+
+Copyright © 2026 Suryaprakash R
 
 ---
 
