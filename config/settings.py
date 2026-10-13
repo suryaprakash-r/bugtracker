@@ -67,6 +67,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -102,13 +105,52 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+DB_ENGINE = os.environ.get("DB_ENGINE", "sqlite").strip().lower()
 
+if DB_ENGINE == "sqlite":
+    db_name = os.environ.get("DB_NAME", "db.sqlite3").strip()
+    db_name = db_name or "db.sqlite3"
+
+    db_path = Path(db_name)
+
+    if not db_path.is_absolute():
+        db_path = BASE_DIR / db_path
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": db_path,
+        }
+    }
+
+elif DB_ENGINE == "mysql":
+    required_db_vars = ["DB_NAME", "DB_USER", "DB_PASSWORD", "DB_HOST"]
+    missing_db_vars = [
+        name for name in required_db_vars
+        if not os.environ.get(name)
+    ]
+
+    if missing_db_vars:
+        raise ImproperlyConfigured(
+            "Missing MySQL environment variables: "
+            + ", ".join(missing_db_vars)
+        )
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": os.environ["DB_NAME"],
+            "USER": os.environ["DB_USER"],
+            "PASSWORD": os.environ["DB_PASSWORD"],
+            "HOST": os.environ["DB_HOST"],
+            "PORT": os.environ.get("DB_PORT", "3306"),
+        }
+    }
+
+else:
+    raise ImproperlyConfigured(
+        f"Unsupported DB_ENGINE: {DB_ENGINE}"
+    )
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
@@ -153,6 +195,15 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
