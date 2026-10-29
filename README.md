@@ -463,3 +463,10 @@ Copyright © 2026 Suryaprakash R
 ## Acknowledgement
 
 BugTracker v1.0 was developed incrementally with functional validation after each major module and a final responsive and regression validation pass before release.
+
+---
+
+## CI/CD Deployment
+
+This application is built, tested, and deployed to Amazon EKS
+through the Jenkins pipeline maintained in the bugtracker-devops repository.
